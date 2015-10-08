@@ -1,24 +1,25 @@
 {
-    "name": "cubicmushroom/payments-stripe",
-    "description": "Package for handling basic Stripe payment gateway operations",
-    "type": "library",
-    "require": {
-        "omnipay/stripe": "^2.0"
-    },
-    "require-dev": {
-        "phpspec/phpspec": "^2.3"
-    },
-    "license": "ISC",
-    "authors": [
-        {
-            "name": "Toby Griffiths",
-            "email": "toby@cubicmushroom.co.uk"
-        }
-    ],
-    "minimum-stability": "stable",
-    "autoload": {
-        "psr-4": {
-            "CubicMushroom\\Payments\\Stripe\\": "src/"
-        }
+  "name"             : "cubicmushroom/payments-stripe",
+  "description"      : "Package for handling basic Stripe payment gateway operations",
+  "type"             : "library",
+  "require"          : {
+    "omnipay/stripe"      : "^2.0",
+    "mathiasverraes/money": "dev-master"
+  },
+  "require-dev"      : {
+    "phpspec/phpspec": "^2.3"
+  },
+  "license"          : "ISC",
+  "authors"          : [
+    {
+      "name" : "Toby Griffiths",
+      "email": "toby@cubicmushroom.co.uk"
     }
+  ],
+  "minimum-stability": "stable",
+  "autoload"         : {
+    "psr-4": {
+      "CubicMushroom\\Payments\\Stripe\\": "src/"
+    }
+  }
 }
