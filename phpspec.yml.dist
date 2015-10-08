@@ -1,0 +1,4 @@
+suites:
+    acme_suite:
+        namespace: CubicMushroom\Payments\Stripe
+        psr4_prefix: CubicMushroom\Payments\Stripe
