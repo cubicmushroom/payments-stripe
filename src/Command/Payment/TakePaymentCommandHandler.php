@@ -25,4 +25,8 @@ class TakePaymentCommandHandler implements CommandHandlerInterface
     public function handle(CommandInterface $command)
     {
     }
+
+    public function handler($argument1)
+    {
+    }
 }
