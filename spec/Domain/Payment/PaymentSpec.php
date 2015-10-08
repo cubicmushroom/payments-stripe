@@ -18,12 +18,16 @@ use Prophecy\Argument;
  */
 class PaymentSpec extends ObjectBehavior
 {
+
+    /**
+     * @uses Payment::__constuct()
+     */
     public function let(Money $cost)
     {
         // @todo - Make $token into a value object
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, $token = 'ugcashdcial');
+        $this->beConstructedWith($cost, 'ugcashdcial', 'Try chopping seaweed tart garnished with honey.');
     }
 
 
@@ -54,7 +58,7 @@ class PaymentSpec extends ObjectBehavior
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, 'hiahicdscd');
+        $this->beConstructedWith($cost, 'hiahicdscd', 'Never remember the wind, for you cannot shape it.');
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getAmount()->shouldReturn(999);
@@ -77,11 +81,29 @@ class PaymentSpec extends ObjectBehavior
         $token = 'akshlacgabskcud';
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedWith($cost, $token);
+        $this->beConstructedWith($cost, $token, 'Oddly examine an alien.');
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getToken()->shouldReturn($token);
     }
 
 
+    /**
+     * @uses Payment::__construct()
+     * @uses Payment::getDescription()
+     */
+    function it_returns_the_description(
+        /** @noinspection PhpDocSignatureInspection */
+        Money $cost
+    ) {
+        /** @noinspection SpellCheckingInspection */
+        $description = 'Historias ortum in cubiculum!';
+
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        /** @noinspection SpellCheckingInspection */
+        $this->beConstructedWith($cost, 'akshlacgabskcud', $description);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getDescription()->shouldReturn($description);
+    }
 }

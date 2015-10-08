@@ -25,15 +25,22 @@ class Payment
      */
     private $token;
 
+    /**
+     * @var string
+     */
+    private $description;
+
 
     /**
-     * @param Money  $cost  Amount & Currency of payment
-     * @param string $token Token passed from Stripe.js
+     * @param Money  $cost        Amount & Currency of payment
+     * @param string $token       Token passed from Stripe.js
+     * @param string $description Description of what the payment is for
      */
-    public function __construct(Money $cost, $token)
+    public function __construct(Money $cost, $token, $description)
     {
         $this->cost  = $cost;
         $this->token = $token;
+        $this->description = $description;
     }
 
 
@@ -75,4 +82,15 @@ class Payment
     {
         return $this->token;
     }
+
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+
 }
