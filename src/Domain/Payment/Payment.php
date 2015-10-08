@@ -30,17 +30,24 @@ class Payment
      */
     private $description;
 
+    /**
+     * @var array
+     */
+    private $metaData;
+
 
     /**
      * @param Money  $cost        Amount & Currency of payment
      * @param string $token       Token passed from Stripe.js
      * @param string $description Description of what the payment is for
+     * @param array  $metaData
      */
-    public function __construct(Money $cost, $token, $description)
+    public function __construct(Money $cost, $token, $description, array $metaData = [])
     {
-        $this->cost  = $cost;
-        $this->token = $token;
+        $this->cost        = $cost;
+        $this->token       = $token;
         $this->description = $description;
+        $this->metaData    = $metaData;
     }
 
 
@@ -90,6 +97,15 @@ class Payment
     public function getDescription()
     {
         return $this->description;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
 

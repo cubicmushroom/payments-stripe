@@ -18,6 +18,14 @@ use Prophecy\Argument;
  */
 class PaymentSpec extends ObjectBehavior
 {
+    const TOKEN       = 'ugcashdcial';
+    const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
+
+    protected $metaData = [
+        1   => 'abc',
+        'a' => 'xyz',
+    ];
+
 
     /**
      * @uses Payment::__constuct()
@@ -27,7 +35,7 @@ class PaymentSpec extends ObjectBehavior
         // @todo - Make $token into a value object
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, 'ugcashdcial', 'Try chopping seaweed tart garnished with honey.');
+        $this->beConstructedWith($cost, self::TOKEN, self::DESCRIPTION, $this->metaData);
     }
 
 
@@ -41,7 +49,6 @@ class PaymentSpec extends ObjectBehavior
 
 
     /**
-     * @uses Payment::__construct()
      * @uses Payment::getAmount()
      * @uses Payment::getCurrency()
      * @uses Payment::getCost()
@@ -56,10 +63,6 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $cost->getCurrency()->willReturn($currency);
 
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
-        /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, 'hiahicdscd', 'Never remember the wind, for you cannot shape it.');
-
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getAmount()->shouldReturn(999);
         /** @noinspection PhpUndefinedMethodInspection */
@@ -70,40 +73,31 @@ class PaymentSpec extends ObjectBehavior
 
 
     /**
-     * @uses Payment::__construct()
      * @uses Payment::getToken()
      */
-    function it_returns_the_token(
-        /** @noinspection PhpDocSignatureInspection */
-        Money $cost
-    ) {
-        /** @noinspection SpellCheckingInspection */
-        $token = 'akshlacgabskcud';
-
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedWith($cost, $token, 'Oddly examine an alien.');
-
+    function it_returns_the_token()
+    {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getToken()->shouldReturn($token);
+        $this->getToken()->shouldReturn(self::TOKEN);
     }
 
 
     /**
-     * @uses Payment::__construct()
      * @uses Payment::getDescription()
      */
-    function it_returns_the_description(
-        /** @noinspection PhpDocSignatureInspection */
-        Money $cost
-    ) {
-        /** @noinspection SpellCheckingInspection */
-        $description = 'Historias ortum in cubiculum!';
-
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
-        /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, 'akshlacgabskcud', $description);
-
+    function it_returns_the_description()
+    {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getDescription()->shouldReturn($description);
+        $this->getDescription()->shouldReturn(self::DESCRIPTION);
+    }
+
+
+    /**
+     * @uses Payment::getMetaData()
+     */
+    function it_returns_metadata()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getMetaData()->shouldReturn($this->metaData);
     }
 }
