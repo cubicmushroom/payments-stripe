@@ -6,7 +6,7 @@ var phpspecGlob = 'spec/**/*Spec.php';
 var srcGlob = 'src/**/*.php';
 
 gulp.task('phpspec', function () {
-  var options = {debug: true, notify: true};
+  var options = {debug: true, verbose: 'v', notify: true};
 
   gulp.src(phpspecGlob)
     .pipe(phpspec('', options))
