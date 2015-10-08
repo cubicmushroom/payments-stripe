@@ -15,5 +15,10 @@
             "email": "toby@cubicmushroom.co.uk"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "CubicMushroom\\Payments\\Stripe\\": "src/"
+        }
+    }
 }
