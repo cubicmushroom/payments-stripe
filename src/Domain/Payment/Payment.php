@@ -20,6 +20,11 @@ class Payment
      */
     protected $cost;
 
+    /**
+     * @var string
+     */
+    private $token;
+
 
     /**
      * @param Money  $cost  Amount & Currency of payment
@@ -27,7 +32,8 @@ class Payment
      */
     public function __construct(Money $cost, $token)
     {
-        $this->cost = $cost;
+        $this->cost  = $cost;
+        $this->token = $token;
     }
 
 
@@ -59,5 +65,14 @@ class Payment
     public function getCost()
     {
         return $this->cost;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

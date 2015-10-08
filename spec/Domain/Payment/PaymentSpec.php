@@ -44,8 +44,9 @@ class PaymentSpec extends ObjectBehavior
      */
     function it_returns_the_amount_and_currency(
         /** @noinspection PhpDocSignatureInspection */
-        Money $cost, Currency $currency)
-    {
+        Money $cost,
+        Currency $currency
+    ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $cost->getAmount()->willReturn(999);
         /** @noinspection PhpUndefinedMethodInspection */
@@ -61,6 +62,25 @@ class PaymentSpec extends ObjectBehavior
         $this->getCurrency()->shouldReturn($currency);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getCost()->shouldReturn($cost);
+    }
+
+
+    /**
+     * @uses Payment::__construct()
+     * @uses Payment::getToken()
+     */
+    function it_returns_the_token(
+        /** @noinspection PhpDocSignatureInspection */
+        Money $cost
+    ) {
+        /** @noinspection SpellCheckingInspection */
+        $token = 'akshlacgabskcud';
+
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $this->beConstructedWith($cost, $token);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getToken()->shouldReturn($token);
     }
 
 
