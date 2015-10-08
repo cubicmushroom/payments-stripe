@@ -1,0 +1,29 @@
+{
+  "name": "payments-stripe",
+  "version": "1.0.0",
+  "description": "Package for handling basic Stripe payment gateway operations",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "gul test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cubicmushroom/stripe.git"
+  },
+  "keywords": [
+    "stripe",
+    "payment",
+    "gateway"
+  ],
+  "author": "Toby Griffiths <toby@cubicmushroom.co.uk>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cubicmushroom/stripe/issues"
+  },
+  "homepage": "https://github.com/cubicmushroom/stripe",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-phpspec": "^0.5.3"
+  }
+}
