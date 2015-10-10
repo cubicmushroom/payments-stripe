@@ -4,10 +4,8 @@
   "type"             : "library",
   "require"          : {
     "omnipay/stripe"      : "^2.0",
-    "mathiasverraes/money": "dev-master"
-  },
-  "require-dev"      : {
-    "phpspec/phpspec": "^2.3"
+    "mathiasverraes/money": "dev-master",
+    "cubicmushroom/hexagonal-components": "dev-master"
   },
   "license"          : "ISC",
   "authors"          : [
@@ -21,5 +19,14 @@
     "psr-4": {
       "CubicMushroom\\Payments\\Stripe\\": "src/"
     }
+  },
+  "repositories"     : [
+    {
+      "type": "vcs",
+      "url": "https://github.com/toby-griffiths/phpspec"
+    }
+  ],
+  "require-dev"      : {
+    "phpspec/phpspec": "dev-master"
   }
 }
