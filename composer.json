@@ -2,11 +2,6 @@
   "name"             : "cubicmushroom/payments-stripe",
   "description"      : "Package for handling basic Stripe payment gateway operations",
   "type"             : "library",
-  "require"          : {
-    "omnipay/stripe"      : "^2.0",
-    "mathiasverraes/money": "dev-master",
-    "cubicmushroom/hexagonal-components": "dev-master"
-  },
   "license"          : "ISC",
   "authors"          : [
     {
@@ -26,6 +21,11 @@
       "url": "https://github.com/toby-griffiths/phpspec"
     }
   ],
+  "require"          : {
+    "omnipay/stripe"      : "^2.0",
+    "mathiasverraes/money": "dev-master",
+    "cubicmushroom/hexagonal-components": "dev-master"
+  },
   "require-dev"      : {
     "phpspec/phpspec": "dev-master"
   }
