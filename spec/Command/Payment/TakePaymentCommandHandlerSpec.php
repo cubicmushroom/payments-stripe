@@ -14,6 +14,7 @@ use Money\Currency;
 use Money\Money;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\PurchaseRequest;
+use PhpSpec\Exception\Example\PendingException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -117,6 +118,23 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
+    }
+
+
+    function it_should_store_a_successful_payment(
+        /** @noinspection PhpDocSignatureInspection */
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        PurchaseRequest $response
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())
+                ->willReturn($response);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        throw new PendingException('Add check for repository call, once repository spec complete');
     }
 
 
