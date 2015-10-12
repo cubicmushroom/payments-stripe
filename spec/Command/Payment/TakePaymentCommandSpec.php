@@ -2,7 +2,7 @@
 
 namespace spec\CubicMushroom\Payments\Stripe\Command\Payment;
 
-use CubicMushroom\Payments\Stripe\Command\CommandInterface;
+use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use Money\Currency;
 use Money\Money;

@@ -2,7 +2,7 @@
 
 namespace CubicMushroom\Payments\Stripe\Command\Payment;
 
-use CubicMushroom\Payments\Stripe\Command\CommandInterface;
+use CubicMushroom\Hexagonal\Command\CommandInterface;
 use Money\Money;
 
 
