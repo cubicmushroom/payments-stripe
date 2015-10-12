@@ -8,9 +8,11 @@ use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Event\CommandFailedEventInterface;
 use CubicMushroom\Hexagonal\Event\CommandSucceededEventInterface;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -27,26 +29,38 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
 {
 
     /**
-     * @param ValidatorInterface $validator
-     * @param EmitterInterface   $emitter
-     * @param Gateway            $gateway
+     * @param ValidatorInterface         $validator
+     * @param EmitterInterface           $emitter
+     * @param Gateway                    $gateway
+     * @param PaymentRepositoryInterface $repository
      *
      * @return static
      */
-    public static function create(ValidatorInterface $validator, EmitterInterface $emitter, Gateway $gateway)
-    {
+    public static function create(
+        ValidatorInterface $validator,
+        EmitterInterface $emitter,
+        Gateway $gateway,
+        PaymentRepositoryInterface $repository
+    ) {
         /** @var self $handler */
         $handler = parent::createBasic($validator, $emitter);
 
-        $handler->gateway = $gateway;
+        $handler->gateway    = $gateway;
+        $handler->repository = $repository;
 
         return $handler;
     }
+
 
     /**
      * @var Gateway
      */
     protected $gateway;
+
+    /**
+     * @var PaymentRepositoryInterface
+     */
+    protected $repository;
 
 
     /**
@@ -64,6 +78,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      * @param CommandInterface|TakePaymentCommand $command
      *
      * @throws GatewayPaymentException
+     * @throws SavePaymentFailedException
      */
     protected function _handle(CommandInterface $command)
     {
@@ -72,9 +87,21 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         $payment = $this->convertCommandToPayment($command);
 
         try {
-            $this->gateway->purchase($payment->getGatewayPurchaseArray());
+            $reponse = $this->gateway->purchase($payment->getGatewayPurchaseArray());
         } catch (\Exception $gatewayException) {
-            throw GatewayPaymentException::createWithPayment($payment, 'The Stripe Payment gateway failed to process payment', 0, $gatewayException);
+            throw GatewayPaymentException::createWithPayment(
+                $payment,
+                'The Stripe Payment gateway failed to process payment',
+                0,
+                $gatewayException
+            );
+        }
+
+        try {
+            // @todo - Update $payment with response details
+            $this->repository->saveSuccessfulPayment($payment);
+        } catch (SavePaymentFailedException $savePaymentFailedException) {
+            throw $savePaymentFailedException;
         }
     }
 
