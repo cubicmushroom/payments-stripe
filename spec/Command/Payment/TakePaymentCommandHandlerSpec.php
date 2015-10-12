@@ -30,9 +30,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
-    const AMOUNT   = 999;
-    const CURRENCY = 'GBP';
-    const TOKEN    = 'alshclldsacsab';
+    const AMOUNT      = 999;
+    const CURRENCY    = 'GBP';
+    const TOKEN       = 'alshclldsacsab';
     const DESCRIPTION = 'The great unknown is full of conclusion.';
 
 
@@ -53,7 +53,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     function __construct()
     {
         $this->currency = new Currency(self::CURRENCY);
-        $this->cost = new Money(self::AMOUNT, $this->currency);
+        $this->cost     = new Money(self::AMOUNT, $this->currency);
     }
 
 
@@ -140,7 +140,14 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
-        $gateway->purchase(['amount' => self::AMOUNT, 'currency' => self::CURRENCY, 'token' => self::TOKEN])
+        $gateway->purchase(
+            [
+                'amount'      => self::AMOUNT,
+                'currency'    => self::CURRENCY,
+                'token'       => self::TOKEN,
+                'description' => self::DESCRIPTION,
+            ]
+        )
                 ->shouldBeCalled();
 
         /** @noinspection PhpUndefinedMethodInspection */
