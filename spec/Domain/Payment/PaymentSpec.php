@@ -121,4 +121,20 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getMetaData()->shouldReturn($this->metaData);
     }
+
+
+    /**
+     * @uses Payment::getGatewayPurchaseArray();
+     */
+    function it_returns_an_array_of_details_for_the_gateway_purchase_call()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getGatewayPurchaseArray()->shouldReturn(
+            ['amount'      => self::AMOUNT,
+             'currency'    => self::CURRENCY,
+             'token'       => self::TOKEN,
+             'description' => self::DESCRIPTION,
+            ]
+        );
+    }
 }

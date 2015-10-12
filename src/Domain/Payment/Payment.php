@@ -109,4 +109,18 @@ class Payment
     }
 
 
+    /**
+     * @return array ['amount' => string, 'currency' => string, 'token' =. string, 'description' => string]
+     */
+    public function getGatewayPurchaseArray()
+    {
+        return [
+            'amount'      => $this->getCost()->getAmount(),
+            'currency'    => $this->getCost()->getCurrency()->getName(),
+            'token'       => $this->getToken(),
+            'description' => $this->getDescription(),
+        ];
+    }
+
+
 }
