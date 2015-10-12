@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cubicmushroom/hexagonal-components.git",
-                "reference": "2a25f004ba8929af53b59062c3396cfd26df154f"
+                "reference": "d8fa5b021b3a4f426f51ac524f902b18dd64bdd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/2a25f004ba8929af53b59062c3396cfd26df154f",
-                "reference": "2a25f004ba8929af53b59062c3396cfd26df154f",
+                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/d8fa5b021b3a4f426f51ac524f902b18dd64bdd8",
+                "reference": "d8fa5b021b3a4f426f51ac524f902b18dd64bdd8",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "Useful elements for implementing hexagonal architecture",
-            "time": "2015-10-09 12:24:01"
+            "time": "2015-10-12 16:06:00"
         },
         {
             "name": "guzzle/guzzle",
@@ -806,12 +806,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/toby-griffiths/phpspec.git",
-                "reference": "65ffb18916dfbbdea625ad0986ff0970e896d999"
+                "reference": "5dad935de17cebeb4437cd4257378469c0dbb745"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toby-griffiths/phpspec/zipball/65ffb18916dfbbdea625ad0986ff0970e896d999",
-                "reference": "65ffb18916dfbbdea625ad0986ff0970e896d999",
+                "url": "https://api.github.com/repos/toby-griffiths/phpspec/zipball/5dad935de17cebeb4437cd4257378469c0dbb745",
+                "reference": "5dad935de17cebeb4437cd4257378469c0dbb745",
                 "shasum": ""
             },
             "require": {
@@ -821,17 +821,17 @@
                 "phpspec/php-diff": "~1.0.0",
                 "phpspec/prophecy": "~1.4",
                 "sebastian/exporter": "~1.0",
-                "symfony/console": "~2.3",
-                "symfony/event-dispatcher": "~2.1",
-                "symfony/finder": "~2.1",
-                "symfony/process": "^2.6",
-                "symfony/yaml": "~2.1"
+                "symfony/console": "~2.3|~3.0",
+                "symfony/event-dispatcher": "~2.1|~3.0",
+                "symfony/finder": "~2.1|~3.0",
+                "symfony/process": "^2.6|~3.0",
+                "symfony/yaml": "~2.1|~3.0"
             },
             "require-dev": {
                 "behat/behat": "^3.0.11",
                 "bossa/phpspec2-expect": "~1.0",
                 "phpunit/phpunit": "~4.4",
-                "symfony/filesystem": "~2.1"
+                "symfony/filesystem": "~2.1|~3.0"
             },
             "suggest": {
                 "phpspec/nyan-formatters": "~1.0 – Adds Nyan formatters"
@@ -883,7 +883,7 @@
             "support": {
                 "source": "https://github.com/toby-griffiths/phpspec/tree/master"
             },
-            "time": "2015-10-10 14:43:39"
+            "time": "2015-10-12 13:33:18"
         },
         {
             "name": "phpspec/prophecy",
