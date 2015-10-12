@@ -61,9 +61,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
     /**
      * Processes the associated command
      *
-     * @param TakePaymentCommand $command
+     * @param CommandInterface|TakePaymentCommand $command
      *
-     * @return void
+     * @throws GatewayPaymentException
      */
     protected function _handle(CommandInterface $command)
     {
@@ -86,8 +86,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function convertCommandToPayment(TakePaymentCommand $command)
     {
-        // @todo - Add support for payment description
-        $payment = new Payment($command->getCost(), $command->getToken(), '');
+        $payment = new Payment($command->getCost(), $command->getToken(), $command->getDescription());
 
         return $payment;
     }

@@ -72,6 +72,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $command->getCost()->willReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getToken()->willReturn(self::TOKEN);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $command->getDescription()->willReturn(self::DESCRIPTION);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
