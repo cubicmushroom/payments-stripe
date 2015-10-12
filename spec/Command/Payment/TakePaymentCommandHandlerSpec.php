@@ -7,6 +7,8 @@ use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
+use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use League\Event\EmitterInterface;
@@ -31,6 +33,28 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     const AMOUNT   = 999;
     const CURRENCY = 'GBP';
     const TOKEN    = 'alshclldsacsab';
+    const DESCRIPTION = 'The great unknown is full of conclusion.';
+
+
+    /**
+     * @var Money
+     */
+    protected $cost;
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
+
+
+    /**
+     * Prepare common spec properties
+     */
+    function __construct()
+    {
+        $this->currency = new Currency(self::CURRENCY);
+        $this->cost = new Money(self::AMOUNT, $this->currency);
+    }
 
 
     /**
@@ -41,15 +65,16 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         ValidatorInterface $validator,
         EmitterInterface $emitter,
         TakePaymentCommand $command,
-        Gateway $gateway
+        Gateway $gateway,
+        PaymentRepositoryInterface $repository
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
-        $command->getCost()->willReturn(new Money(self::AMOUNT, new Currency(self::CURRENCY)));
+        $command->getCost()->willReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getToken()->willReturn(self::TOKEN);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedThrough('create', [$validator, $emitter, $gateway]);
+        $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
     }
 
 
@@ -67,7 +92,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_handles_take_payment_commands(
         /** @noinspection PhpDocSignatureInspection */
@@ -79,7 +104,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_does_not_handle_other_commands()
     {
@@ -89,7 +114,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_validates_the_command(
         /** @noinspection PhpDocSignatureInspection */
@@ -105,7 +130,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_should_call_to_confirm_payment_with_stripe(
         /** @noinspection PhpDocSignatureInspection */
@@ -121,11 +146,15 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
     function it_should_store_a_successful_payment(
         /** @noinspection PhpDocSignatureInspection */
         Gateway $gateway,
         TakePaymentCommand $command,
-        PurchaseRequest $response
+        PurchaseRequest $response,
+        PaymentRepositoryInterface $repository
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())
@@ -134,12 +163,18 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
+        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $repository->saveSuccessfulPayment($expectedPayment)->shouldHaveBeenCalled();
+
         throw new PendingException('Add check for repository call, once repository spec complete');
     }
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_should_emit_a_success_event_if_all_ok(
         /** @noinspection PhpDocSignatureInspection */
@@ -162,7 +197,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommandHandler::handle()
+     * @uses TakePaymentCommandHandler::_handle()
      */
     function it_should_emit_a_failure_event_if_not_ok(
         /** @noinspection PhpDocSignatureInspection */
