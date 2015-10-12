@@ -15,10 +15,37 @@ use Prophecy\Argument;
  *
  * @package CubicMushroom\Payments\Stripe
  *
- * @see \CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand
+ * @see     \CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand
  */
 class TakePaymentCommandSpec extends ObjectBehavior
 {
+    const AMOUNT      = 999;
+    const CURRENCY    = 'GBP';
+    const /** @noinspection SpellCheckingInspection */
+          TOKEN       = 'ashcgdocpwaelcb';
+    const DESCRIPTION = 'Why does the crewmate walk?';
+
+    /**
+     * @var Money
+     */
+    protected $cost;
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
+
+
+    /**
+     * Sets up common spec test values
+     */
+    public function __construct()
+    {
+        $this->currency = new Currency(self::CURRENCY);
+        $this->cost     = new Money(self::AMOUNT, $this->currency);
+    }
+
+
     function it_is_initializable()
     {
         $this->shouldHaveType(TakePaymentCommand::class);
@@ -37,16 +64,12 @@ class TakePaymentCommandSpec extends ObjectBehavior
      */
     function it_should_be_initialise_through_static_builder()
     {
-        $cost = new Money(999, new Currency('GBP')  );
-        /** @noinspection SpellCheckingInspection */
-        $token = 't7398ryhslddvd';
-
-        $this->beConstructedThrough('create', [$cost, $token]);
+        $this->beConstructedThrough('create', [$this->cost, self::TOKEN]);
         $this->shouldHaveType(TakePaymentCommand::class);
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getCost()->shouldReturn($cost);
+        $this->getCost()->shouldReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getToken()->shouldReturn($token);
+        $this->getToken()->shouldReturn(self::TOKEN);
     }
 }
