@@ -2,6 +2,8 @@
 
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
+
 /**
  * Class PaymentRepositoryInterface
  *
@@ -14,8 +16,9 @@ interface PaymentRepositoryInterface
     /**
      * @param Payment $payment
      *
-     * @return
-     * @internal param $argument1
+     * @return void
+     *
+     * @throws SavePaymentFailedException
      */
     public function saveSuccessfulPayment(Payment $payment);
 }
