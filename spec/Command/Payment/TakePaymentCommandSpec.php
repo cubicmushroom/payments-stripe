@@ -4,6 +4,8 @@ namespace spec\CubicMushroom\Payments\Stripe\Command\Payment;
 
 use CubicMushroom\Payments\Stripe\Command\CommandInterface;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
+use Money\Currency;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -27,5 +29,24 @@ class TakePaymentCommandSpec extends ObjectBehavior
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldBeAnInstanceOf(CommandInterface::class);
+    }
+
+
+    /**
+     * @uses TakePaymentCommand::cost()
+     */
+    function it_should_be_initialise_through_static_builder()
+    {
+        $cost = new Money(999, new Currency('GBP')  );
+        /** @noinspection SpellCheckingInspection */
+        $token = 't7398ryhslddvd';
+
+        $this->beConstructedThrough('create', [$cost, $token]);
+        $this->shouldHaveType(TakePaymentCommand::class);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getCost()->shouldReturn($cost);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getToken()->shouldReturn($token);
     }
 }
