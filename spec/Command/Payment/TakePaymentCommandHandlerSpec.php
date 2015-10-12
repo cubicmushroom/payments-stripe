@@ -2,9 +2,14 @@
 
 namespace spec\CubicMushroom\Payments\Stripe\Command\Payment;
 
-use CubicMushroom\Payments\Stripe\Command\CommandHandlerInterface;
+use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
+use CubicMushroom\Hexagonal\Command\CommandHandlerInterface;
+use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
+use Money\Currency;
+use Money\Money;
+use Omnipay\Stripe\Gateway;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -17,6 +22,23 @@ use Prophecy\Argument;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
+    const AMOUNT   = 999;
+    const CURRENCY = 'GBP';
+    const TOKEN    = 'alshclldsacsab';
+
+
+    function let(TakePaymentCommand $command, Gateway $gateway)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $command->getCost()->willReturn(new Money(self::AMOUNT, new Currency(self::CURRENCY)));
+        /** @noinspection PhpUndefinedMethodInspection */
+        $command->getToken()->willReturn(self::TOKEN);
+
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
+        $this->beConstructedWith($gateway);
+    }
+
+
     function it_is_initializable()
     {
         $this->shouldHaveType(TakePaymentCommandHandler::class);
@@ -35,9 +57,44 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_handles_take_payment_commands(
         /** @noinspection PhpDocSignatureInspection */
-        TakePaymentCommand $command)
+        TakePaymentCommand $command
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::handle()
+     */
+    function it_does_not_handle_other_commands()
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->handler($command);
+        $this->handle(new DummyCommand)->shouldThrow(InvalidCommandException::class);
     }
+
+
+    function it_validates_the_command()
+    {
+
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::handle()
+     */
+    function it_should_call_to_confirm_payment_with_stripe(Gateway $gateway, TakePaymentCommand $command)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(['amount' => self::AMOUNT, 'currency' => self::CURRENCY, 'token' => self::TOKEN])
+                ->shouldHaveBeenCalled();
+    }
+}
+
+
+class DummyCommand implements CommandInterface
+{
 }
