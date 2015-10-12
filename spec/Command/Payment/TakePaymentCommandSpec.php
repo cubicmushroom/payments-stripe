@@ -60,16 +60,20 @@ class TakePaymentCommandSpec extends ObjectBehavior
 
 
     /**
-     * @uses TakePaymentCommand::cost()
+     * @uses TakePaymentCommand::getCost()
+     * @uses TakePaymentCommand::getToken()
+     * @uses TakePaymentCommand::getDescription()
      */
     function it_should_be_initialise_through_static_builder()
     {
-        $this->beConstructedThrough('create', [$this->cost, self::TOKEN]);
+        $this->beConstructedThrough('create', [$this->cost, self::TOKEN, self::DESCRIPTION]);
         $this->shouldHaveType(TakePaymentCommand::class);
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getCost()->shouldReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getToken()->shouldReturn(self::TOKEN);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getDescription()->shouldReturn(self::DESCRIPTION);
     }
 }

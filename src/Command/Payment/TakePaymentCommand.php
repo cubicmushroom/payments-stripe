@@ -23,16 +23,18 @@ class TakePaymentCommand implements CommandInterface
     /**
      * @param Money  $cost
      * @param string $token
+     * @param string $description
      *
      * @return $this
      */
-    public static function create(Money $cost, $token)
+    public static function create(Money $cost, $token, $description)
     {
         $takePaymentCommand = new self($cost, $token);
 
         $takePaymentCommand
             ->setCost($cost)
-            ->setToken($token);
+            ->setToken($token)
+            ->setDescription($description);
 
         return $takePaymentCommand;
     }
@@ -51,6 +53,9 @@ class TakePaymentCommand implements CommandInterface
      * @var string
      */
     private $token;
+
+
+    private $description;
 
 
     /**
@@ -103,4 +108,28 @@ class TakePaymentCommand implements CommandInterface
 
         return $this;
     }
+
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+
 }
