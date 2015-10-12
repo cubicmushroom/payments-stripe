@@ -91,7 +91,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         } catch (\Exception $gatewayException) {
             throw GatewayPaymentException::createWithPayment(
                 $payment,
-                'The Stripe Payment gateway failed to process payment',
+                'Failed to process payment with the Stripe payment gateway',
                 0,
                 $gatewayException
             );
