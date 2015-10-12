@@ -17,6 +17,7 @@ use Money\Currency;
 use Money\Money;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\PurchaseRequest;
+use Omnipay\Stripe\Message\Response;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -66,14 +67,26 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         EmitterInterface $emitter,
         TakePaymentCommand $command,
         Gateway $gateway,
+        PurchaseRequest $purchaseRequest,
+        Response $response,
         PaymentRepositoryInterface $repository
     ) {
+        // Command
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getCost()->willReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getToken()->willReturn(self::TOKEN);
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getDescription()->willReturn(self::DESCRIPTION);
+
+        // Gateway request/response
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())
+                ->willReturn($purchaseRequest);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $purchaseRequest->send()->willReturn($response);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response->isSuccessful()->willReturn(true);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
@@ -100,6 +113,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpDocSignatureInspection */
         TakePaymentCommand $command
     ) {
+
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
     }
@@ -137,7 +151,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     function it_should_call_to_confirm_payment_with_stripe(
         /** @noinspection PhpDocSignatureInspection */
         Gateway $gateway,
-        TakePaymentCommand $command
+        TakePaymentCommand $command,
+        PurchaseRequest $purchaseRequest
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(
@@ -148,6 +163,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
                 'description' => self::DESCRIPTION,
             ]
         )
+                ->willReturn($purchaseRequest)
                 ->shouldBeCalled();
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -160,15 +176,9 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_should_store_a_successful_payment(
         /** @noinspection PhpDocSignatureInspection */
-        Gateway $gateway,
         TakePaymentCommand $command,
-        PurchaseRequest $response,
         PaymentRepositoryInterface $repository
     ) {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $gateway->purchase(Argument::any())
-                ->willReturn($response);
-
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
@@ -187,12 +197,12 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpDocSignatureInspection */
         Gateway $gateway,
         TakePaymentCommand $command,
-        PurchaseRequest $response,
+        PurchaseRequest $purchaseRequest,
         EmitterInterface $emitter
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())
-                ->willReturn($response)
+                ->willReturn($purchaseRequest)
                 ->shouldBeCalled();
 
         /** @noinspection PhpUndefinedMethodInspection */

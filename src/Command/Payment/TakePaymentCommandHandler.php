@@ -87,7 +87,11 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         $payment = $this->convertCommandToPayment($command);
 
         try {
-            $reponse = $this->gateway->purchase($payment->getGatewayPurchaseArray());
+            $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
+            $purchaseResponse = $purchaseRequest->send();
+            if (!$purchaseResponse->isSuccessful()) {
+                throw GatewayPaymentException::createWithPayment($payment, $purchaseResponse->getMessage());
+            }
         } catch (\Exception $gatewayException) {
             throw GatewayPaymentException::createWithPayment(
                 $payment,
