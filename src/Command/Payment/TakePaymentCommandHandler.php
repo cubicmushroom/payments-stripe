@@ -49,11 +49,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
 
 
     /**
-     * TakePaymentCommandHandler constructor.
-     *
-     * @param Gateway $gateway
+     * Please use `create()` method to construct
      */
-    public function __construct()
+    protected function __construct()
     {
     }
 
