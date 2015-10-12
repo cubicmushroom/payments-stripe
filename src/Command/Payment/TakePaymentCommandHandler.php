@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class TakePaymentCommandHandler extends AbstractCommandHandler
 {
-    use Hexagonal\Command\CommandValidatorTrait;
-    use Hexagonal\Command\EventHelperTrait;
-
 
     /**
      * @param ValidatorInterface $validator
