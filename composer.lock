@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cubicmushroom/hexagonal-components.git",
-                "reference": "d8fa5b021b3a4f426f51ac524f902b18dd64bdd8"
+                "reference": "2b14641cf88015b14cd4356ee6d22d5b6208f4ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/d8fa5b021b3a4f426f51ac524f902b18dd64bdd8",
-                "reference": "d8fa5b021b3a4f426f51ac524f902b18dd64bdd8",
+                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/2b14641cf88015b14cd4356ee6d22d5b6208f4ad",
+                "reference": "2b14641cf88015b14cd4356ee6d22d5b6208f4ad",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "Useful elements for implementing hexagonal architecture",
-            "time": "2015-10-12 16:06:00"
+            "time": "2015-10-12 16:28:15"
         },
         {
             "name": "guzzle/guzzle",
