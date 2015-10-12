@@ -7,6 +7,8 @@ use CubicMushroom\Hexagonal\Command\AbstractCommandHandler;
 use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Event\CommandFailedEventInterface;
 use CubicMushroom\Hexagonal\Event\CommandSucceededEventInterface;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -90,7 +92,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function getSuccessEvent(CommandInterface $command)
     {
-        // TODO: Implement getSuccessEvent() method.
+        return new TakePaymentSuccessEvent($command);
     }
 
 
@@ -101,6 +103,6 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function getFailureEvent(\Exception $exception)
     {
-        // TODO: Implement getFailureEvent() method.
+        return new TakePaymentFailureEvent($exception);
     }
 }

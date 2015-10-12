@@ -7,10 +7,13 @@ use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
 use Omnipay\Stripe\Gateway;
+use Omnipay\Stripe\Message\PurchaseRequest;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -109,11 +112,56 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(['amount' => self::AMOUNT, 'currency' => self::CURRENCY, 'token' => self::TOKEN])
+                ->shouldBeCalled();
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::handle()
+     */
+    function it_should_emit_a_success_event_if_all_ok(
+        /** @noinspection PhpDocSignatureInspection */
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        PurchaseRequest $response,
+        EmitterInterface $emitter
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())
+                ->willReturn($response)
+                ->shouldBeCalled();
+
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $gateway->purchase(['amount' => self::AMOUNT, 'currency' => self::CURRENCY, 'token' => self::TOKEN])
-                ->shouldHaveBeenCalled();
+        $emitter->emit(Argument::type(TakePaymentSuccessEvent::class))->shouldHaveBeenCalled();
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::handle()
+     */
+    function it_should_emit_a_failure_event_if_not_ok(
+        /** @noinspection PhpDocSignatureInspection */
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        EmitterInterface $emitter
+    ) {
+        $gatewayException = new \Exception('payment failed');
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())->willThrow($gatewayException);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->shouldThrow($gatewayException)->during('handle', [$command]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $emitter->emit(Argument::type(TakePaymentFailureEvent::class))->shouldHaveBeenCalled();
     }
 }
 
