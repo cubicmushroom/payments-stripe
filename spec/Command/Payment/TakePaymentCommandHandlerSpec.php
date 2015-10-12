@@ -87,8 +87,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     /**
      * @uses TakePaymentCommandHandler::handle()
      */
-    function it_validates_the_command(TakePaymentCommand $command, ValidatorInterface $validator)
-    {
+    function it_validates_the_command(
+        /** @noinspection PhpDocSignatureInspection */
+        TakePaymentCommand $command,
+        ValidatorInterface $validator
+    ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
