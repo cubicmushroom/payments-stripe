@@ -2,16 +2,18 @@
 
 namespace spec\CubicMushroom\Payments\Stripe\Command\Payment;
 
-use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Hexagonal\Command\CommandHandlerInterface;
 use CubicMushroom\Hexagonal\Command\CommandInterface;
+use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
+use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
 use Omnipay\Stripe\Gateway;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class TakePaymentCommandHandlerSpec
@@ -22,20 +24,28 @@ use Prophecy\Argument;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
-    const AMOUNT   = 999;
+    const AMOUNT = 999;
     const CURRENCY = 'GBP';
-    const TOKEN    = 'alshclldsacsab';
+    const TOKEN = 'alshclldsacsab';
 
 
-    function let(TakePaymentCommand $command, Gateway $gateway)
-    {
+    /**
+     * @uses TakePaymentCommandHandler::__construct()
+     */
+    function let(
+        /** @noinspection PhpDocSignatureInspection */
+        ValidatorInterface $validator,
+        EmitterInterface $emitter,
+        TakePaymentCommand $command,
+        Gateway $gateway
+    ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getCost()->willReturn(new Money(self::AMOUNT, new Currency(self::CURRENCY)));
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getToken()->willReturn(self::TOKEN);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedWith($gateway);
+        $this->beConstructedThrough('create', [$validator, $emitter, $gateway]);
     }
 
 
@@ -76,7 +86,6 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
     function it_validates_the_command()
     {
-
     }
 
 
