@@ -24,9 +24,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
-    const AMOUNT = 999;
+    const AMOUNT   = 999;
     const CURRENCY = 'GBP';
-    const TOKEN = 'alshclldsacsab';
+    const TOKEN    = 'alshclldsacsab';
 
 
     /**
@@ -80,20 +80,31 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     function it_does_not_handle_other_commands()
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->handle(new DummyCommand)->shouldThrow(InvalidCommandException::class);
-    }
-
-
-    function it_validates_the_command()
-    {
+        $this->shouldThrow(InvalidCommandException::class)->during('handle', [new DummyCommand]);
     }
 
 
     /**
      * @uses TakePaymentCommandHandler::handle()
      */
-    function it_should_call_to_confirm_payment_with_stripe(Gateway $gateway, TakePaymentCommand $command)
+    function it_validates_the_command(TakePaymentCommand $command, ValidatorInterface $validator)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $validator->validate($command)->shouldHaveBeenCalled();
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::handle()
+     */
+    function it_should_call_to_confirm_payment_with_stripe(
+        /** @noinspection PhpDocSignatureInspection */
+        Gateway $gateway,
+        TakePaymentCommand $command
+    ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
