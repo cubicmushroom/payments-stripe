@@ -78,6 +78,7 @@ class PaymentSpec extends ObjectBehavior
      * @uses Payment::getAmount()
      * @uses Payment::getCurrency()
      * @uses Payment::getCost()
+     * @uses Payment::getDescription()
      */
     function it_returns_the_amount_and_currency()
     {
@@ -87,6 +88,8 @@ class PaymentSpec extends ObjectBehavior
         $this->getCurrency()->shouldReturn($this->currency);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getCost()->shouldReturn($this->cost);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getDescription()->shouldReturn(self::DESCRIPTION);
     }
 
 
