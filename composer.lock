@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4fea7780ea39aed1a879ff64ad121111",
+    "hash": "765063f1e22b502ece121344a8e70a82",
     "packages": [
         {
             "name": "cubicmushroom/hexagonal-components",
@@ -193,16 +193,16 @@
         },
         {
             "name": "mathiasverraes/money",
-            "version": "dev-master",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mathiasverraes/money.git",
-                "reference": "b3f12b93d5b1bd58e45cc22d12c4b267e48d4cc4"
+                "reference": "b9e258119041fed20e4704f72e3ebb94ed10bea2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mathiasverraes/money/zipball/b3f12b93d5b1bd58e45cc22d12c4b267e48d4cc4",
-                "reference": "b3f12b93d5b1bd58e45cc22d12c4b267e48d4cc4",
+                "url": "https://api.github.com/repos/mathiasverraes/money/zipball/b9e258119041fed20e4704f72e3ebb94ed10bea2",
+                "reference": "b9e258119041fed20e4704f72e3ebb94ed10bea2",
                 "shasum": ""
             },
             "require": {
@@ -244,7 +244,7 @@
                 "Value Object",
                 "money"
             ],
-            "time": "2015-05-26 15:40:41"
+            "time": "2014-10-07 12:54:10"
         },
         {
             "name": "omnipay/common",
@@ -1388,7 +1388,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "mathiasverraes/money": 20,
         "cubicmushroom/hexagonal-components": 20,
         "phpspec/phpspec": 20
     },

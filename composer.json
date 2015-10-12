@@ -18,12 +18,12 @@
   "repositories"     : [
     {
       "type": "vcs",
-      "url": "https://github.com/toby-griffiths/phpspec"
+      "url" : "https://github.com/toby-griffiths/phpspec"
     }
   ],
   "require"          : {
-    "omnipay/stripe"      : "^2.0",
-    "mathiasverraes/money": "dev-master",
+    "omnipay/stripe"                    : "^2.0",
+    "mathiasverraes/money"              : "^1.0",
     "cubicmushroom/hexagonal-components": "dev-master"
   },
   "require-dev"      : {
