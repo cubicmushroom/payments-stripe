@@ -18,24 +18,50 @@ use Prophecy\Argument;
  */
 class PaymentSpec extends ObjectBehavior
 {
+    const AMOUNT      = 999;
+    const CURRENCY    = 'GBP';
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
 
-    protected $metaData = [
-        1   => 'abc',
-        'a' => 'xyz',
-    ];
+    /**
+     * @var Money
+     */
+    protected $cost;
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
+
+    /**
+     * @var array
+     */
+    protected $metaData;
 
 
     /**
-     * @uses Payment::__constuct()
+     * Sets up common spec properties
      */
-    public function let(Money $cost)
+    public function __construct()
+    {
+        $this->currency = new Currency(self::CURRENCY);
+        $this->cost     = new Money(self::AMOUNT, $this->currency);
+        $this->metaData = [
+            1   => 'abc',
+            'a' => 'xyz',
+        ];
+    }
+
+
+    /**
+     * @uses Payment::__construct()
+     */
+    public function let()
     {
         // @todo - Make $token into a value object
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($cost, self::TOKEN, self::DESCRIPTION, $this->metaData);
+        $this->beConstructedWith($this->cost, self::TOKEN, self::DESCRIPTION, $this->metaData);
     }
 
 
@@ -53,22 +79,14 @@ class PaymentSpec extends ObjectBehavior
      * @uses Payment::getCurrency()
      * @uses Payment::getCost()
      */
-    function it_returns_the_amount_and_currency(
-        /** @noinspection PhpDocSignatureInspection */
-        Money $cost,
-        Currency $currency
-    ) {
+    function it_returns_the_amount_and_currency()
+    {
         /** @noinspection PhpUndefinedMethodInspection */
-        $cost->getAmount()->willReturn(999);
+        $this->getAmount()->shouldReturn(self::AMOUNT);
         /** @noinspection PhpUndefinedMethodInspection */
-        $cost->getCurrency()->willReturn($currency);
-
+        $this->getCurrency()->shouldReturn($this->currency);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getAmount()->shouldReturn(999);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->getCurrency()->shouldReturn($currency);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->getCost()->shouldReturn($cost);
+        $this->getCost()->shouldReturn($this->cost);
     }
 
 
