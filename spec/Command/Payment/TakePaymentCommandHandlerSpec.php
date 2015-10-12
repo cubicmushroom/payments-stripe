@@ -11,12 +11,12 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
 use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\PurchaseRequest;
-use PhpSpec\Exception\Example\PendingException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -177,8 +177,6 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         $repository->saveSuccessfulPayment($expectedPayment)->shouldHaveBeenCalled();
-
-        throw new PendingException('Add check for repository call, once repository spec complete');
     }
 
 
@@ -214,7 +212,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command,
         EmitterInterface $emitter
     ) {
-        $gatewayException = new \Exception('payment failed');
+        $gatewayException = new GatewayPaymentException('Failed to process payment with the Stripe payment gateway');
 
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())->willThrow($gatewayException);
