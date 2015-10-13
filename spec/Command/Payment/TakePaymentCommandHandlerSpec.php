@@ -13,6 +13,8 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
@@ -273,7 +275,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command,
         EmitterInterface $emitter
     ) {
-        $gatewayException = new GatewayPaymentException('Failed to process payment with the Stripe payment gateway');
+        $gatewayException = new PaymentFailedException('Failed to process payment with the Stripe payment gateway');
 
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())->willThrow($gatewayException);
