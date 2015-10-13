@@ -13,9 +13,11 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
+use Omnipay\Stripe\Message\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -25,6 +27,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * Command: TakePaymentCommand
  *
  * @package CubicMushroom\Payments\Stripe
+ *
+ * @todo    - Add Logging to all exception throws
  */
 class TakePaymentCommandHandler extends AbstractCommandHandler
 {
@@ -102,10 +106,10 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
             if (!$purchaseResponse->isSuccessful()) {
-                throw GatewayPaymentException::createWithPayment($payment, $purchaseResponse->getMessage());
+                throw PaymentFailedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
         } catch (\Exception $gatewayException) {
-            throw GatewayPaymentException::createWithPayment(
+            throw PaymentFailedException::createWithPayment(
                 $payment,
                 'Failed to process payment with the Stripe payment gateway',
                 0,
