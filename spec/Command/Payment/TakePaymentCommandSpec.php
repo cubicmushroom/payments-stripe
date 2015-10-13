@@ -8,6 +8,7 @@ use Money\Currency;
 use Money\Money;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use ValueObjects\Web\EmailAddress;
 
 
 /**
@@ -21,9 +22,9 @@ class TakePaymentCommandSpec extends ObjectBehavior
 {
     const AMOUNT      = 999;
     const CURRENCY    = 'GBP';
-    const /** @noinspection SpellCheckingInspection */
-          TOKEN       = 'ashcgdocpwaelcb';
-    const DESCRIPTION = 'Why does the crewmate walk?';
+    const TOKEN       = 'aFakeToken';
+    const DESCRIPTION = 'Why does the crew mate walk?';
+    const USER_EMAIL  = 'bob@fish.com';
 
     /**
      * @var Money
@@ -37,12 +38,19 @@ class TakePaymentCommandSpec extends ObjectBehavior
 
 
     /**
+     * @var EmailAddress
+     */
+    protected $userEmail;
+
+
+    /**
      * Sets up common spec test values
      */
     public function __construct()
     {
-        $this->currency = new Currency(self::CURRENCY);
-        $this->cost     = new Money(self::AMOUNT, $this->currency);
+        $this->currency  = new Currency(self::CURRENCY);
+        $this->cost      = new Money(self::AMOUNT, $this->currency);
+        $this->userEmail = new EmailAddress(self::USER_EMAIL);
     }
 
 
@@ -63,10 +71,11 @@ class TakePaymentCommandSpec extends ObjectBehavior
      * @uses TakePaymentCommand::getCost()
      * @uses TakePaymentCommand::getToken()
      * @uses TakePaymentCommand::getDescription()
+     * @uses TakePaymentCommand::getUserEmail()
      */
     function it_should_be_initialise_through_static_builder()
     {
-        $this->beConstructedThrough('create', [$this->cost, self::TOKEN, self::DESCRIPTION]);
+        $this->beConstructedThrough('create', [$this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail]);
         $this->shouldHaveType(TakePaymentCommand::class);
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -75,5 +84,7 @@ class TakePaymentCommandSpec extends ObjectBehavior
         $this->getToken()->shouldReturn(self::TOKEN);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getDescription()->shouldReturn(self::DESCRIPTION);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getUserEmail()->shouldReturn($this->userEmail);
     }
 }

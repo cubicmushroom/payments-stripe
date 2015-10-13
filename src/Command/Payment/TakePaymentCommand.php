@@ -4,6 +4,7 @@ namespace CubicMushroom\Payments\Stripe\Command\Payment;
 
 use CubicMushroom\Hexagonal\Command\CommandInterface;
 use Money\Money;
+use ValueObjects\Web\EmailAddress;
 
 
 /**
@@ -21,20 +22,23 @@ class TakePaymentCommand implements CommandInterface
 
 
     /**
-     * @param Money  $cost
-     * @param string $token
-     * @param string $description
+     * @param Money        $cost
+     * @param string       $token
+     * @param string       $description
+     *
+     * @param EmailAddress $userEmail
      *
      * @return $this
      */
-    public static function create(Money $cost, $token, $description)
+    public static function create(Money $cost, $token, $description, EmailAddress $userEmail)
     {
         $takePaymentCommand = new self($cost, $token);
 
         $takePaymentCommand
             ->setCost($cost)
             ->setToken($token)
-            ->setDescription($description);
+            ->setDescription($description)
+            ->setUserEmail($userEmail);
 
         return $takePaymentCommand;
     }
@@ -54,8 +58,15 @@ class TakePaymentCommand implements CommandInterface
      */
     private $token;
 
-
+    /**
+     * @var string
+     */
     private $description;
+
+    /**
+     * @var EmailAddress
+     */
+    private $userEmail;
 
 
     /**
@@ -127,6 +138,28 @@ class TakePaymentCommand implements CommandInterface
     public function setDescription($description)
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+
+    /**
+     * @return EmailAddress
+     */
+    public function getUserEmail()
+    {
+        return $this->userEmail;
+    }
+
+
+    /**
+     * @param EmailAddress $userEmail
+     *
+     * @return TakePaymentCommand
+     */
+    public function setUserEmail(EmailAddress $userEmail)
+    {
+        $this->userEmail = $userEmail;
 
         return $this;
     }
