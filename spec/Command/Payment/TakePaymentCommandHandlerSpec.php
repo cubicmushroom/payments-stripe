@@ -245,7 +245,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
                 'metadata'    => [
-                    'paymentID' => self::PAYMENT_ID,
+                    'paymentId' => self::PAYMENT_ID,
                 ],
             ]
         )
