@@ -12,7 +12,6 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
-use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
@@ -91,7 +90,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         $payment = $this->convertCommandToPayment($command);
 
         try {
-            $paymentId = $this->repository->savePaymentBeforeProcessing($payment);
+            // We clone the payment object here, so PHPSpec can test it, until the following issue is resolved…
+            // https://github.com/phpspec/phpspec/issues/789
+            $paymentId = $this->repository->savePaymentBeforeProcessing(clone $payment);
             $payment->assignId($paymentId);
         } catch (\Exception $exception) {
             throw PaymentFailedException::createWithPayment(

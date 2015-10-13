@@ -9,6 +9,7 @@ use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
@@ -57,6 +58,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     protected $expectedUnpaidPayment;
 
     /**
+     * @var PaymentId
+     */
+    protected $paymentId;
+
+    /**
      * @var StripePaymentId
      */
     protected $stripePaymentId;
@@ -79,15 +85,16 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
             self::TOKEN,
             self::DESCRIPTION
         );
+        $this->paymentId                = new PaymentId(self::PAYMENT_ID);
         $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
         $this->expectedProcessedPayment = (
         new Payment(
             $this->cost,
             self::TOKEN,
-            self::DESCRIPTION,
-            ['paymentId' => self::PAYMENT_ID]
+            self::DESCRIPTION
         )
-        )->assignGatewayId($this->stripePaymentId)
+        )->assignId($this->paymentId)
+         ->assignGatewayId($this->stripePaymentId)
          ->markAsPaid();
     }
 
@@ -113,13 +120,6 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getDescription()->willReturn(self::DESCRIPTION);
 
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        /** @noinspection PhpUndefinedMethodInspection */
-        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldBeCalled();
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        /** @noinspection PhpUndefinedMethodInspection */
-        $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();
-
         // Gateway request/response
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())
@@ -136,26 +136,14 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-    function it_is_initializable(PaymentRepositoryInterface $repository)
+    function it_is_initializable()
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldNotBeCalled();
-        /** @noinspection PhpUndefinedMethodInspection */
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
-
         $this->shouldHaveType(TakePaymentCommandHandler::class);
     }
 
 
-    function it_implements_command_handler_interface(PaymentRepositoryInterface $repository)
+    function it_implements_command_handler_interface()
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldNotBeCalled();
-        /** @noinspection PhpUndefinedMethodInspection */
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
-
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldBeAnInstanceOf(CommandHandlerInterface::class);
     }
@@ -166,8 +154,10 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_handles_take_payment_commands(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         TakePaymentCommand $command
     ) {
+        $this->setRepositoryMethodExpectations($repository);
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
@@ -189,9 +179,12 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_validates_the_command(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         TakePaymentCommand $command,
         ValidatorInterface $validator
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
@@ -205,11 +198,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_creates_an_unpaid_payment_record_first_of_all(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         Gateway $gateway,
-        TakePaymentCommand $command,
-        PaymentRepositoryInterface $repository
+        TakePaymentCommand $command
     ) {
-        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
+        $this->setRepositoryMethodExpectations($repository);
 
         // As PHPSpec appears to compare the status of the argument object at the end of the test, rather than at the
         // time of the method call, we need to throw an exception from the gateway to prevent the Payment object being
@@ -219,10 +212,6 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldThrow(\Exception::class)->during('handle', [$command]);
-
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        /** @noinspection PhpUndefinedMethodInspection */
-        $repository->savePaymentBeforeProcessing($expectedPayment)->shouldBeCalled();
     }
 
 
@@ -248,10 +237,13 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_should_call_to_confirm_payment_with_stripe(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         Gateway $gateway,
         TakePaymentCommand $command,
         PurchaseRequest $purchaseRequest
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(
             [
@@ -259,6 +251,9 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
+                'metadata'    => [
+                    'paymentID' => self::PAYMENT_ID,
+                ],
             ]
         )
                 ->willReturn($purchaseRequest)
@@ -274,9 +269,12 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_should_throw_a_payment_failed_exception_if_payment_not_processed_by_stripe_ok(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         Gateway $gateway,
         TakePaymentCommand $command
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())->willThrow(new \Exception);
 
@@ -292,18 +290,15 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command,
         PaymentRepositoryInterface $repository
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
         $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
         $expectedPayment
-            ->assignGatewayId(new StripePaymentId(self::RESPONSE_ID))
+            ->assignGatewayId(new StripePaymentId(self::STRIPE_PAYMENT_ID))
             ->markAsPaid();
-
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $repository->markAsPaid($expectedPayment)->shouldHaveBeenCalled();
     }
 
 
@@ -312,11 +307,14 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_should_emit_a_success_event_if_all_ok(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         Gateway $gateway,
         TakePaymentCommand $command,
         PurchaseRequest $purchaseRequest,
         EmitterInterface $emitter
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())
                 ->willReturn($purchaseRequest)
@@ -335,10 +333,13 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function it_should_emit_a_failure_event_if_not_ok(
         /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
         Gateway $gateway,
         TakePaymentCommand $command,
         EmitterInterface $emitter
     ) {
+        $this->setRepositoryMethodExpectations($repository);
+
         $gatewayException = new PaymentFailedException('Failed to process payment with the Stripe payment gateway');
 
         /** @noinspection PhpUndefinedMethodInspection */
@@ -349,6 +350,22 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @noinspection PhpUndefinedMethodInspection */
         $emitter->emit(Argument::type(TakePaymentFailureEvent::class))->shouldHaveBeenCalled();
+    }
+
+
+    /**
+     * @param PaymentRepositoryInterface $repository
+     */
+    public function setRepositoryMethodExpectations(PaymentRepositoryInterface $repository)
+    {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)
+                   ->shouldBeCalled()
+                   ->willReturn($this->paymentId);
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();
     }
 }
 
