@@ -230,7 +230,10 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $this->handle($command);
 
         $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
-        $expectedPayment->assignGatewayId(new StripePaymentId(self::RESPONSE_ID));
+        $expectedPayment
+            ->assignGatewayId(new StripePaymentId(self::RESPONSE_ID))
+            ->markAsPaid();
+
 
         /** @noinspection PhpUndefinedMethodInspection */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
