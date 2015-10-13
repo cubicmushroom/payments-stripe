@@ -18,7 +18,7 @@ interface PaymentRepositoryInterface
      *
      * @param Payment $payment
      *
-     * @return void
+     * @return PaymentId
      *
      * @throws SavePaymentFailedException
      */
