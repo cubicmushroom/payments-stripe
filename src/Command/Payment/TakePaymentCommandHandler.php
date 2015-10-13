@@ -129,7 +129,12 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function convertCommandToPayment(TakePaymentCommand $command)
     {
-        $payment = new Payment($command->getCost(), $command->getToken(), $command->getDescription());
+        $payment = new Payment(
+            $command->getCost(),
+            $command->getToken(),
+            $command->getDescription(),
+            $command->getUserEmail()
+        );
 
         return $payment;
     }

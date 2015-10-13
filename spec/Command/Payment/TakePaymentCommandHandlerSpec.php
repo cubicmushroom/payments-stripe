@@ -24,6 +24,7 @@ use Omnipay\Stripe\Message\Response;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use ValueObjects\Web\EmailAddress;
 
 /**
  * Class TakePaymentCommandHandlerSpec
@@ -38,6 +39,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     const CURRENCY          = 'GBP';
     const TOKEN             = 'alshclldsacsab';
     const DESCRIPTION       = 'The great unknown is full of conclusion.';
+    const USER_EMAIL        = 'hello@world.com';
     const PAYMENT_ID        = 52;
     const STRIPE_PAYMENT_ID = 'ch_igc987120ed9230';
 
@@ -51,6 +53,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      * @var Currency
      */
     protected $currency;
+
+    /**
+     * @var EmailAddress
+     */
+    protected $userEmail;
 
     /**
      * @var Payment
@@ -80,18 +87,15 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     {
         $this->currency                 = new Currency(self::CURRENCY);
         $this->cost                     = new Money(self::AMOUNT, $this->currency);
+        $this->userEmail                = new EmailAddress(self::USER_EMAIL);
         $this->expectedUnpaidPayment    = new Payment(
-            $this->cost,
-            self::TOKEN,
-            self::DESCRIPTION
+            $this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail
         );
         $this->paymentId                = new PaymentId(self::PAYMENT_ID);
         $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
         $this->expectedProcessedPayment = (
         new Payment(
-            $this->cost,
-            self::TOKEN,
-            self::DESCRIPTION
+            $this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail
         )
         )->assignId($this->paymentId)
          ->assignGatewayId($this->stripePaymentId)
@@ -119,6 +123,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $command->getToken()->willReturn(self::TOKEN);
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getDescription()->willReturn(self::DESCRIPTION);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $command->getUserEmail()->willReturn($this->userEmail);
 
         // Gateway request/response
         /** @noinspection PhpUndefinedMethodInspection */
@@ -289,7 +295,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
 
-        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
+        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail);
         $expectedPayment
             ->assignGatewayId(new StripePaymentId(self::STRIPE_PAYMENT_ID))
             ->markAsPaid();

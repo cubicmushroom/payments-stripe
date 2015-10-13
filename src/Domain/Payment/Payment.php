@@ -7,6 +7,7 @@ use CubicMushroom\Hexagonal\Domain\Generic\ModelInterface;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use Money\Currency;
 use Money\Money;
+use ValueObjects\Web\EmailAddress;
 
 
 /**
@@ -55,22 +56,29 @@ class Payment extends Model implements ModelInterface
 
     private $isPaid;
 
+    /**
+     * @var EmailAddress
+     */
+    private $userEmail;
+
 
     // -----------------------------------------------------------------------------------------------------------------
     // Constructor
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * @param Money  $cost        Amount & Currency of payment
-     * @param string $token       Token passed from Stripe.js
-     * @param string $description Description of what the payment is for
-     * @param array  $metaData
+     * @param Money        $cost        Amount & Currency of payment
+     * @param string       $token       Token passed from Stripe.js
+     * @param string       $description Description of what the payment is for
+     * @param EmailAddress $userEmail
+     * @param array        $metaData
      */
-    public function __construct(Money $cost, $token, $description, array $metaData = [])
+    public function __construct(Money $cost, $token, $description, EmailAddress $userEmail, array $metaData = [])
     {
         $this->cost        = $cost;
         $this->token       = $token;
         $this->description = $description;
+        $this->userEmail   = $userEmail;
         $this->metaData    = $metaData;
         $this->isPaid      = false;
     }
@@ -158,6 +166,15 @@ class Payment extends Model implements ModelInterface
     public function getDescription()
     {
         return $this->description;
+    }
+
+
+    /**
+     * @return EmailAddress
+     */
+    public function getUserEmail()
+    {
+        return $this->userEmail;
     }
 
 

@@ -9,6 +9,7 @@ use Money\Currency;
 use Money\Money;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use ValueObjects\Web\EmailAddress;
 
 
 /**
@@ -24,6 +25,7 @@ class PaymentSpec extends ObjectBehavior
     const CURRENCY    = 'GBP';
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
+    const USER_EMAIL  = 'bob@fish.com';
     const GATEWAY_ID  = 'ch_bflco298h2932bc2c02';
     const ID          = 126;
 
@@ -36,6 +38,11 @@ class PaymentSpec extends ObjectBehavior
      * @var Currency
      */
     protected $currency;
+
+    /**
+     * @var EmailAddress
+     */
+    protected $userEmail;
 
     /**
      * @var array
@@ -60,6 +67,7 @@ class PaymentSpec extends ObjectBehavior
     {
         $this->currency  = new Currency(self::CURRENCY);
         $this->cost      = new Money(self::AMOUNT, $this->currency);
+        $this->userEmail = new EmailAddress(self::USER_EMAIL);
         $this->metaData  = [
             1   => 'abc',
             'a' => 'xyz',
@@ -77,7 +85,7 @@ class PaymentSpec extends ObjectBehavior
         // @todo - Make $token into a value object
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($this->cost, self::TOKEN, self::DESCRIPTION, $this->metaData);
+        $this->beConstructedWith($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail, $this->metaData);
     }
 
 
@@ -95,8 +103,11 @@ class PaymentSpec extends ObjectBehavior
      * @uses Payment::getCurrency()
      * @uses Payment::getCost()
      * @uses Payment::getDescription()
+     * @uses Payment::getUserEmail()
+     *
+     * @todo - Replace getXxx() with xxx() methods
      */
-    function it_returns_the_amount_and_currency()
+    function it_returns_all_the_details()
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getAmount()->shouldReturn(self::AMOUNT);
@@ -106,6 +117,8 @@ class PaymentSpec extends ObjectBehavior
         $this->getCost()->shouldReturn($this->cost);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getDescription()->shouldReturn(self::DESCRIPTION);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getUserEmail()->shouldReturn($this->userEmail);
     }
 
 
@@ -126,6 +139,16 @@ class PaymentSpec extends ObjectBehavior
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getDescription()->shouldReturn(self::DESCRIPTION);
+    }
+
+
+    /**
+     * @uses Payment::getDescription()
+     */
+    function it_returns_the_user_email()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getUserEmail()->shouldReturn($this->userEmail);
     }
 
 
