@@ -15,6 +15,8 @@ use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SaveUnpaidPaymentExce
 interface PaymentRepositoryInterface
 {
     /**
+     * Should save a new payment record, and mark it as unpaid
+     *
      * @param Payment $payment
      *
      * @return void
