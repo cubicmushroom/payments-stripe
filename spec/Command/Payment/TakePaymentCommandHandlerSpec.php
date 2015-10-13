@@ -267,6 +267,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command
     ) {
         $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
 
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())->willThrow(new \Exception);
@@ -347,9 +348,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
 
     /**
+     * Sets the expected calls & responses on PaymentRepositoryInterface stub
+     *
      * @param PaymentRepositoryInterface $repository
      */
-    public function setRepositoryMethodExpectations(PaymentRepositoryInterface $repository)
+    protected function setRepositoryMethodExpectations(PaymentRepositoryInterface $repository)
     {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         /** @noinspection PhpUndefinedMethodInspection */
@@ -359,6 +362,19 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();
+    }
+
+
+    /**
+     * Clears the expected calls on PaymentRepositoryInterface stub markAsPaid() method
+     *
+     * @param PaymentRepositoryInterface $repository
+     */
+    protected function clearRepositoryMarkAsPaidExpectation(PaymentRepositoryInterface $repository)
+    {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
     }
 }
 
