@@ -7,6 +7,7 @@ use CubicMushroom\Hexagonal\Command\AbstractCommandHandler;
 use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Event\CommandFailedEventInterface;
 use CubicMushroom\Hexagonal\Event\CommandSucceededEventInterface;
+use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
@@ -102,7 +103,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         }
 
         try {
-            // @todo - Update $payment with response details
+            $payment->assignGatewayId(new StripePaymentId($purchaseResponse->getTransactionReference()));
             $this->repository->saveSuccessfulPayment($payment);
         } catch (SavePaymentFailedException $savePaymentFailedException) {
             throw $savePaymentFailedException;

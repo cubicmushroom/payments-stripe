@@ -7,6 +7,7 @@ use CubicMushroom\Hexagonal\Command\CommandInterface;
 use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
+use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
@@ -35,6 +36,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     const CURRENCY    = 'GBP';
     const TOKEN       = 'alshclldsacsab';
     const DESCRIPTION = 'The great unknown is full of conclusion.';
+    const RESPONSE_ID = 'ch_igc987120ed9230';
 
 
     /**
@@ -87,6 +89,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $purchaseRequest->send()->willReturn($response);
         /** @noinspection PhpUndefinedMethodInspection */
         $response->isSuccessful()->willReturn(true);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response->getTransactionReference()->willReturn(self::RESPONSE_ID);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
@@ -183,6 +187,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $this->handle($command);
 
         $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
+        $expectedPayment->assignGatewayId(new StripePaymentId(self::RESPONSE_ID));
 
         /** @noinspection PhpUndefinedMethodInspection */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
