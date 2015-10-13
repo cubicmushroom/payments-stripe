@@ -170,6 +170,23 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     /**
      * @uses TakePaymentCommandHandler::_handle()
      */
+    function it_should_throw_a_payment_failed_exception_if_unable_to_save_unpaid_payment_details(
+        /** @noinspection PhpDocSignatureInspection */
+        TakePaymentCommand $command,
+        PaymentRepositoryInterface $repository
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpParamsInspection */
+        $repository->savePaymentBeforeProcessing(Argument::any())->willThrow(SavePaymentFailedException::class);
+
+        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
     function it_should_call_to_confirm_payment_with_stripe(
         /** @noinspection PhpDocSignatureInspection */
         Gateway $gateway,

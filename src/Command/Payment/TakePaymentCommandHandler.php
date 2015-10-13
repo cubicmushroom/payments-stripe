@@ -87,8 +87,17 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
 
         $payment = $this->convertCommandToPayment($command);
 
-        $this->repository->savePaymentBeforeProcessing($payment);
-        
+        try {
+            $this->repository->savePaymentBeforeProcessing($payment);
+        } catch (\Exception $exception) {
+            throw PaymentFailedException::createWithPayment(
+                $payment,
+                'Unable to save payment details before processing',
+                0,
+                $exception
+            );
+        }
+
         try {
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
