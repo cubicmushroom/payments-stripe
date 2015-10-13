@@ -64,8 +64,8 @@ class PaymentSpec extends ObjectBehavior
             1   => 'abc',
             'a' => 'xyz',
         ];
-        $this->gatewayId = new StripePaymentId(self::GATEWAY_ID);
         $this->id        = new PaymentId(self::ID);
+        $this->gatewayId = new StripePaymentId(self::GATEWAY_ID);
     }
 
 
@@ -153,10 +153,14 @@ class PaymentSpec extends ObjectBehavior
 
 
     /**
+     * @uses Payment::assignId();
      * @uses Payment::getGatewayPurchaseArray();
      */
     function it_returns_an_array_of_details_for_the_gateway_purchase_call()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assignId($this->id);
+
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getGatewayPurchaseArray()->shouldReturn(
             [
@@ -164,6 +168,7 @@ class PaymentSpec extends ObjectBehavior
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
+                'metadata'    => array_merge($this->metaData, ['paymentId' => self::ID]),
             ]
         );
     }

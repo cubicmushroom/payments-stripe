@@ -178,10 +178,11 @@ class Payment extends Model implements ModelInterface
     public function getGatewayPurchaseArray()
     {
         return [
-            'amount'      => $this->getCost()->getAmount(),
-            'currency'    => $this->getCost()->getCurrency()->getName(),
-            'token'       => $this->getToken(),
-            'description' => $this->getDescription(),
+            'amount'      => $this->cost->getAmount(),
+            'currency'    => $this->cost->getCurrency()->getName(),
+            'token'       => $this->token,
+            'description' => $this->description,
+            'metadata'    => array_merge_recursive($this->metaData, ['paymentId' => $this->id->getValue()]),
         ];
     }
 
