@@ -87,6 +87,8 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
 
         $payment = $this->convertCommandToPayment($command);
 
+        $this->repository->savePaymentBeforeProcessing($payment);
+        
         try {
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();

@@ -152,6 +152,24 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     /**
      * @uses TakePaymentCommandHandler::_handle()
      */
+    function it_creates_an_unpaid_payment_record_first_of_all(
+        /** @noinspection PhpDocSignatureInspection */
+        TakePaymentCommand $command,
+        PaymentRepositoryInterface $repository
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION);
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->savePaymentBeforeProcessing($expectedPayment)->shouldBeCalled();
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
     function it_should_call_to_confirm_payment_with_stripe(
         /** @noinspection PhpDocSignatureInspection */
         Gateway $gateway,
