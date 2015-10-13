@@ -12,7 +12,6 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
-use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\GatewayPaymentException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
@@ -217,6 +216,21 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_throw_a_payment_failed_exception_if_payment_not_processed_by_stripe_ok(
+        /** @noinspection PhpDocSignatureInspection */
+        Gateway $gateway,
+        TakePaymentCommand $command
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())->willThrow(new \Exception);
+
+        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
     }
 
 
