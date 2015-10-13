@@ -2,6 +2,7 @@
 
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Hexagonal\Domain\Generic\ModelInterface;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use Money\Currency;
 use Money\Money;
@@ -14,8 +15,17 @@ use Money\Money;
  *
  * @see     \spec\CubicMushroom\Payments\Stripe\Domain\Payment\PaymentSpec
  */
-class Payment
+class Payment implements ModelInterface
 {
+    // -----------------------------------------------------------------------------------------------------------------
+    // Properties
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @var PaymentId
+     */
+    protected $id;
+
     /**
      * @var StripePaymentId
      */
@@ -42,6 +52,10 @@ class Payment
     private $metaData;
 
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * @param Money  $cost        Amount & Currency of payment
      * @param string $token       Token passed from Stripe.js
@@ -54,6 +68,39 @@ class Payment
         $this->token       = $token;
         $this->description = $description;
         $this->metaData    = $metaData;
+    }
+
+
+    /**
+     * @return PaymentId
+     */
+    public function Id()
+    {
+        return $this->id;
+    }
+
+
+    /**
+     * Here because the interface wants it
+     *
+     * @return PaymentId
+     */
+    public function getId()
+    {
+        return $this->Id();
+    }
+
+
+    /**
+     * @param PaymentId $id
+     *
+     * @return $this
+     */
+    public function assignId(PaymentId $id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
 
@@ -138,6 +185,8 @@ class Payment
 
 
     /**
+     * Used to extract the details to pass to the Stripe payment gateway
+     *
      * @return array ['amount' => string, 'currency' => string, 'token' =. string, 'description' => string]
      */
     public function getGatewayPurchaseArray()

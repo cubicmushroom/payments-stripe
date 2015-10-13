@@ -4,6 +4,7 @@ namespace spec\CubicMushroom\Payments\Stripe\Domain\Payment;
 
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use Money\Currency;
 use Money\Money;
 use PhpSpec\ObjectBehavior;
@@ -24,6 +25,7 @@ class PaymentSpec extends ObjectBehavior
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
     const GATEWAY_ID  = 'ch_bflco298h2932bc2c02';
+    const ID = 126;
 
     /**
      * @var Money
@@ -45,6 +47,11 @@ class PaymentSpec extends ObjectBehavior
      */
     protected $gatewayId;
 
+    /**
+     * @var PaymentId
+     */
+    protected $id;
+
 
     /**
      * Sets up common spec properties
@@ -58,6 +65,7 @@ class PaymentSpec extends ObjectBehavior
             'a' => 'xyz',
         ];
         $this->gatewayId = new StripePaymentId(self::GATEWAY_ID);
+        $this->id = new PaymentId(self::ID);
     }
 
 
@@ -137,7 +145,9 @@ class PaymentSpec extends ObjectBehavior
      */
     function it_can_have_its_gateway_id_set_and_retrieved()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->assignGatewayId($this->gatewayId)->shouldBeAnInstanceOf(Payment::class);
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->gatewayId()->shouldReturn($this->gatewayId);
     }
 
@@ -156,5 +166,14 @@ class PaymentSpec extends ObjectBehavior
                 'description' => self::DESCRIPTION,
             ]
         );
+    }
+
+
+    function it_can_have_its_id_assigned_and_retrieved()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assignId($this->id)->shouldBeAnInstanceOf(Payment::class);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->id()->shouldReturn($this->id);
     }
 }
