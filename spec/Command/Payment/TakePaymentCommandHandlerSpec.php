@@ -33,11 +33,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
-    const AMOUNT      = 999;
-    const CURRENCY    = 'GBP';
-    const TOKEN       = 'alshclldsacsab';
-    const DESCRIPTION = 'The great unknown is full of conclusion.';
-    const RESPONSE_ID = 'ch_igc987120ed9230';
+    const AMOUNT            = 999;
+    const CURRENCY          = 'GBP';
+    const TOKEN             = 'alshclldsacsab';
+    const DESCRIPTION       = 'The great unknown is full of conclusion.';
+    const PAYMENT_ID        = 52;
+    const STRIPE_PAYMENT_ID = 'ch_igc987120ed9230';
 
 
     /**
@@ -50,14 +51,44 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     protected $currency;
 
+    /**
+     * @var Payment
+     */
+    protected $expectedUnpaidPayment;
+
+    /**
+     * @var StripePaymentId
+     */
+    protected $stripePaymentId;
+
+    /**
+     * @var Payment
+     */
+    protected $expectedProcessedPayment;
+
 
     /**
      * Prepare common spec properties
      */
     function __construct()
     {
-        $this->currency = new Currency(self::CURRENCY);
-        $this->cost     = new Money(self::AMOUNT, $this->currency);
+        $this->currency                 = new Currency(self::CURRENCY);
+        $this->cost                     = new Money(self::AMOUNT, $this->currency);
+        $this->expectedUnpaidPayment    = new Payment(
+            $this->cost,
+            self::TOKEN,
+            self::DESCRIPTION
+        );
+        $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
+        $this->expectedProcessedPayment = (
+        new Payment(
+            $this->cost,
+            self::TOKEN,
+            self::DESCRIPTION,
+            ['paymentId' => self::PAYMENT_ID]
+        )
+        )->assignGatewayId($this->stripePaymentId)
+         ->markAsPaid();
     }
 
 
@@ -82,6 +113,13 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $command->getDescription()->willReturn(self::DESCRIPTION);
 
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldBeCalled();
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();
+
         // Gateway request/response
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(Argument::any())
@@ -91,21 +129,33 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $response->isSuccessful()->willReturn(true);
         /** @noinspection PhpUndefinedMethodInspection */
-        $response->getTransactionReference()->willReturn(self::RESPONSE_ID);
+        $response->getTransactionReference()->willReturn(self::STRIPE_PAYMENT_ID);
 
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
     }
 
 
-    function it_is_initializable()
+    function it_is_initializable(PaymentRepositoryInterface $repository)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldNotBeCalled();
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
+
         $this->shouldHaveType(TakePaymentCommandHandler::class);
     }
 
 
-    function it_implements_command_handler_interface()
+    function it_implements_command_handler_interface(PaymentRepositoryInterface $repository)
     {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)->shouldNotBeCalled();
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
+
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldBeAnInstanceOf(CommandHandlerInterface::class);
     }

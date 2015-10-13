@@ -91,7 +91,8 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         $payment = $this->convertCommandToPayment($command);
 
         try {
-            $this->repository->savePaymentBeforeProcessing($payment);
+            $paymentId = $this->repository->savePaymentBeforeProcessing($payment);
+            $payment->assignId($paymentId);
         } catch (\Exception $exception) {
             throw PaymentFailedException::createWithPayment(
                 $payment,
