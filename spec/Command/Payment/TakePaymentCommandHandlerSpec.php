@@ -199,19 +199,12 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     function it_creates_an_unpaid_payment_record_first_of_all(
         /** @noinspection PhpDocSignatureInspection */
         PaymentRepositoryInterface $repository,
-        Gateway $gateway,
         TakePaymentCommand $command
     ) {
         $this->setRepositoryMethodExpectations($repository);
 
-        // As PHPSpec appears to compare the status of the argument object at the end of the test, rather than at the
-        // time of the method call, we need to throw an exception from the gateway to prevent the Payment object being
-        // changed before it's used to compare arguments
         /** @noinspection PhpUndefinedMethodInspection */
-        $gateway->purchase(Argument::any())->willThrow(new \Exception('Testing only the initial save!'));
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->shouldThrow(\Exception::class)->during('handle', [$command]);
+        $this->handle($command);
     }
 
 
