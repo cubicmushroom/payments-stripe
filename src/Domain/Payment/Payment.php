@@ -199,7 +199,10 @@ class Payment extends Model implements ModelInterface
             'currency'    => $this->cost->getCurrency()->getName(),
             'token'       => $this->token,
             'description' => $this->description,
-            'metadata'    => array_merge_recursive($this->metaData, ['paymentId' => $this->id->getValue()]),
+            'metadata'    => array_merge_recursive(
+                $this->metaData,
+                ['paymentId' => $this->id->getValue(), 'userEmail' => (string)$this->userEmail]
+            ),
         ];
     }
 

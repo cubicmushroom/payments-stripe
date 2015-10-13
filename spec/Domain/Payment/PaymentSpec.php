@@ -191,7 +191,7 @@ class PaymentSpec extends ObjectBehavior
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
-                'metadata'    => array_merge($this->metaData, ['paymentId' => self::ID]),
+                'metadata'    => array_merge($this->metaData, ['paymentId' => self::ID, 'userEmail' => self::USER_EMAIL]),
             ]
         );
     }
