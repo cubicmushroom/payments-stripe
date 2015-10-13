@@ -176,4 +176,13 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->id()->shouldReturn($this->id);
     }
+
+
+    function its_id_should_be_immutable_once_set()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assignId($this->id)->shouldBeAnInstanceOf(Payment::class);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->shouldThrow()->during('assignId', [$this->id]);
+    }
 }

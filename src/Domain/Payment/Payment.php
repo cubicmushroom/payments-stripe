@@ -2,6 +2,7 @@
 
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Hexagonal\Domain\Generic\Model;
 use CubicMushroom\Hexagonal\Domain\Generic\ModelInterface;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use Money\Currency;
@@ -15,7 +16,7 @@ use Money\Money;
  *
  * @see     \spec\CubicMushroom\Payments\Stripe\Domain\Payment\PaymentSpec
  */
-class Payment implements ModelInterface
+class Payment extends Model implements ModelInterface
 {
     // -----------------------------------------------------------------------------------------------------------------
     // Properties
@@ -70,37 +71,18 @@ class Payment implements ModelInterface
         $this->metaData    = $metaData;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Abstract Model methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * @return PaymentId
-     */
-    public function Id()
-    {
-        return $this->id;
-    }
-
-
-    /**
-     * Here because the interface wants it
+     * Should return the class of the model's $id field value object
      *
-     * @return PaymentId
+     * @return string
      */
-    public function getId()
+    protected function getIdClass()
     {
-        return $this->Id();
-    }
-
-
-    /**
-     * @param PaymentId $id
-     *
-     * @return $this
-     */
-    public function assignId(PaymentId $id)
-    {
-        $this->id = $id;
-
-        return $this;
+        return PaymentId::class;
     }
 
 
