@@ -3,7 +3,6 @@
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
-use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SaveUnpaidPaymentException;
 
 /**
  * Class PaymentRepositoryInterface
@@ -21,7 +20,7 @@ interface PaymentRepositoryInterface
      *
      * @return void
      *
-     * @throws SaveUnpaidPaymentException
+     * @throws SavePaymentFailedException
      */
     public function savePaymentBeforeProcessing(Payment $payment);
 
