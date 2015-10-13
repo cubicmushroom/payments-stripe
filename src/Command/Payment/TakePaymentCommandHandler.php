@@ -76,13 +76,12 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
     }
 
 
-    /** @noinspection PhpDocSignatureInspection */
     /**
      * Processes the associated command
      *
      * @param CommandInterface|TakePaymentCommand $command
      *
-     * @throws GatewayPaymentException
+     * @throws PaymentFailedException
      * @throws SavePaymentFailedException
      */
     protected function _handle(CommandInterface $command)
