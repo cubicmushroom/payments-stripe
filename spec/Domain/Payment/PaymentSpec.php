@@ -2,6 +2,7 @@
 
 namespace spec\CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use Money\Currency;
 use Money\Money;
@@ -22,6 +23,7 @@ class PaymentSpec extends ObjectBehavior
     const CURRENCY    = 'GBP';
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
+    const GATEWAY_ID  = 'ch_bflco298h2932bc2c02';
 
     /**
      * @var Money
@@ -38,6 +40,11 @@ class PaymentSpec extends ObjectBehavior
      */
     protected $metaData;
 
+    /**
+     * @var StripePaymentId
+     */
+    protected $gatewayId;
+
 
     /**
      * Sets up common spec properties
@@ -50,6 +57,7 @@ class PaymentSpec extends ObjectBehavior
             1   => 'abc',
             'a' => 'xyz',
         ];
+        $this->gatewayId = new StripePaymentId(self::GATEWAY_ID);
     }
 
 
@@ -124,16 +132,28 @@ class PaymentSpec extends ObjectBehavior
 
 
     /**
+     * @uses Payment::assignGatewayId()
+     * @uses Payment::gatewayId()
+     */
+    function it_can_have_its_gateway_id_set_and_retrieved()
+    {
+        $this->assignGatewayId($this->gatewayId)->shouldBeAnInstanceOf(Payment::class);
+        $this->gatewayId()->shouldReturn($this->gatewayId);
+    }
+
+
+    /**
      * @uses Payment::getGatewayPurchaseArray();
      */
     function it_returns_an_array_of_details_for_the_gateway_purchase_call()
     {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getGatewayPurchaseArray()->shouldReturn(
-            ['amount'      => self::AMOUNT,
-             'currency'    => self::CURRENCY,
-             'token'       => self::TOKEN,
-             'description' => self::DESCRIPTION,
+            [
+                'amount'      => self::AMOUNT,
+                'currency'    => self::CURRENCY,
+                'token'       => self::TOKEN,
+                'description' => self::DESCRIPTION,
             ]
         );
     }

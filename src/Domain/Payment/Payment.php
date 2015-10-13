@@ -2,6 +2,7 @@
 
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use Money\Currency;
 use Money\Money;
 
@@ -15,6 +16,11 @@ use Money\Money;
  */
 class Payment
 {
+    /**
+     * @var StripePaymentId
+     */
+    private $gatewayId;
+
     /**
      * @var Money
      */
@@ -48,6 +54,28 @@ class Payment
         $this->token       = $token;
         $this->description = $description;
         $this->metaData    = $metaData;
+    }
+
+
+    /**
+     * @return StripePaymentId
+     */
+    public function gatewayId()
+    {
+        return $this->gatewayId;
+    }
+
+
+    /**
+     * @param StripePaymentId $gatewayId
+     *
+     * @return Payment
+     */
+    public function assignGatewayId(StripePaymentId $gatewayId)
+    {
+        $this->gatewayId = $gatewayId;
+
+        return $this;
     }
 
 
@@ -121,6 +149,4 @@ class Payment
             'description' => $this->getDescription(),
         ];
     }
-
-
 }
