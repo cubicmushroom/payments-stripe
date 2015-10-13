@@ -195,4 +195,15 @@ class Payment extends Model implements ModelInterface
     {
         return $this->isPaid;
     }
+
+
+    /**
+     *
+     */
+    public function markAsPaid()
+    {
+        $this->isPaid = true;
+
+        return $this;
+    }
 }

@@ -25,7 +25,7 @@ class PaymentSpec extends ObjectBehavior
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
     const GATEWAY_ID  = 'ch_bflco298h2932bc2c02';
-    const ID = 126;
+    const ID          = 126;
 
     /**
      * @var Money
@@ -58,14 +58,14 @@ class PaymentSpec extends ObjectBehavior
      */
     public function __construct()
     {
-        $this->currency = new Currency(self::CURRENCY);
-        $this->cost     = new Money(self::AMOUNT, $this->currency);
-        $this->metaData = [
+        $this->currency  = new Currency(self::CURRENCY);
+        $this->cost      = new Money(self::AMOUNT, $this->currency);
+        $this->metaData  = [
             1   => 'abc',
             'a' => 'xyz',
         ];
         $this->gatewayId = new StripePaymentId(self::GATEWAY_ID);
-        $this->id = new PaymentId(self::ID);
+        $this->id        = new PaymentId(self::ID);
     }
 
 
@@ -197,8 +197,15 @@ class PaymentSpec extends ObjectBehavior
     }
 
 
+    /**
+     * @uses Payment::markAsPaid()
+     * @uses Payment::isPaid()
+     */
     function it_should_be_possible_to_mark_as_paid()
     {
-
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->markAsPaid()->shouldReturnAnInstanceOf(Payment::class);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->isPaid()->shouldReturn(true);
     }
 }
