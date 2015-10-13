@@ -104,12 +104,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             );
         }
 
-        try {
-            $payment->assignGatewayId(new StripePaymentId($purchaseResponse->getTransactionReference()));
-            $this->repository->saveSuccessfulPayment($payment);
-        } catch (SavePaymentFailedException $savePaymentFailedException) {
-            throw $savePaymentFailedException;
-        }
+        $this->updatePaymentWithStripeCharge($payment, $purchaseResponse);
     }
 
 
@@ -123,6 +118,26 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         $payment = new Payment($command->getCost(), $command->getToken(), $command->getDescription());
 
         return $payment;
+    }
+
+
+    /**
+     * @param Payment  $payment
+     * @param Response $purchaseResponse
+     *
+     * @throws SavePaymentFailedException
+     */
+    protected function updatePaymentWithStripeCharge(Payment $payment, Response $purchaseResponse)
+    {
+        $payment
+            ->assignGatewayId(new StripePaymentId($purchaseResponse->getTransactionReference()))
+            ->markAsPaid();
+
+        try {
+            $this->repository->markAsPaid($payment);
+        } catch (SavePaymentFailedException $savePaymentFailedException) {
+            throw $savePaymentFailedException;
+        }
     }
 
 

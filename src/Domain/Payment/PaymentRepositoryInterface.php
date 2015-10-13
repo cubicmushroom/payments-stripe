@@ -31,5 +31,5 @@ interface PaymentRepositoryInterface
      *
      * @throws SavePaymentFailedException
      */
-    public function saveSuccessfulPayment(Payment $payment);
+    public function markAsPaid(Payment $payment);
 }

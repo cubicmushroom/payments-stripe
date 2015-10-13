@@ -209,7 +209,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @noinspection PhpUndefinedMethodInspection */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $repository->saveSuccessfulPayment($expectedPayment)->shouldHaveBeenCalled();
+        $repository->markAsPaid($expectedPayment)->shouldHaveBeenCalled();
     }
 
 
