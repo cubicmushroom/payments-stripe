@@ -128,18 +128,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         // Gateway request/response
         /** @noinspection PhpUndefinedMethodInspection */
-        $gateway->purchase(
-            [
-                'amount'      => self::AMOUNT,
-                'currency'    => self::CURRENCY,
-                'token'       => self::TOKEN,
-                'description' => self::DESCRIPTION,
-                'metadata'    => [
-                    'paymentId' => self::PAYMENT_ID,
-                    'userEmail' => self::USER_EMAIL,
-                ],
-            ]
-        )
+        $gateway->purchase(Argument::any())
                 ->willReturn($purchaseRequest);
         /** @noinspection PhpUndefinedMethodInspection */
         $purchaseRequest->send()->willReturn($response);
