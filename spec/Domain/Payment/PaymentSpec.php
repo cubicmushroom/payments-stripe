@@ -185,4 +185,20 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldThrow()->during('assignId', [$this->id]);
     }
+
+
+    /**
+     * @uses Payment::isPaid()
+     */
+    function it_should_default_to_unpaid()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->isPaid()->shouldReturn(false);
+    }
+
+
+    function it_should_be_possible_to_mark_as_paid()
+    {
+
+    }
 }

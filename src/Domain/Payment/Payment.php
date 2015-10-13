@@ -53,6 +53,9 @@ class Payment extends Model implements ModelInterface
     private $metaData;
 
 
+    private $isPaid;
+
+
     // -----------------------------------------------------------------------------------------------------------------
     // Constructor
     // -----------------------------------------------------------------------------------------------------------------
@@ -69,6 +72,7 @@ class Payment extends Model implements ModelInterface
         $this->token       = $token;
         $this->description = $description;
         $this->metaData    = $metaData;
+        $this->isPaid      = false;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -179,5 +183,16 @@ class Payment extends Model implements ModelInterface
             'token'       => $this->getToken(),
             'description' => $this->getDescription(),
         ];
+    }
+
+
+    /**
+     * Returns a boolean value indicating whether the payment has been processed (or captured in Stripe terms)
+     *
+     * @return bool
+     */
+    public function isPaid()
+    {
+        return $this->isPaid;
     }
 }
