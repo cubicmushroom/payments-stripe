@@ -333,6 +333,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         EmitterInterface $emitter
     ) {
         $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
 
         $gatewayException = new PaymentFailedException('Failed to process payment with the Stripe payment gateway');
 
