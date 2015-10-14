@@ -4,6 +4,7 @@ namespace CubicMushroom\Payments\Stripe\Command\Payment;
 
 use CubicMushroom\Hexagonal\Command\CommandInterface;
 use Money\Money;
+use Symfony\Component\Validator\Constraints as Assert;
 use ValueObjects\Web\EmailAddress;
 
 
@@ -49,22 +50,30 @@ class TakePaymentCommand implements CommandInterface
 
     /**
      * @var Money
+     *
+     * @Assert\NotNull(message="Please provide the cost details")
      */
 
     private $cost;
 
     /**
      * @var string
+     *
+     * @Assert\NotNull(message="Please provide a payment card")
      */
     private $token;
 
     /**
      * @var string
+     *
+     * @Assert\NotNull(message="Please provide a description of the payment")
      */
     private $description;
 
     /**
      * @var EmailAddress
+     *
+     * @Assert\NotNull(message="Please provide the user's email address")
      */
     private $userEmail;
 
