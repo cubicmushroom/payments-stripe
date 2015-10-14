@@ -52,6 +52,7 @@ class TakePaymentCommand implements CommandInterface
      * @var Money
      *
      * @Assert\NotNull(message="Please provide the cost details")
+     * @Assert\Type(type="\Money\Money", message="Please provide the cost details")
      */
 
     private $cost;
@@ -59,14 +60,14 @@ class TakePaymentCommand implements CommandInterface
     /**
      * @var string
      *
-     * @Assert\NotNull(message="Please provide a payment card")
+     * @Assert\NotBlank(message="Please provide a payment card")
      */
     private $token;
 
     /**
      * @var string
      *
-     * @Assert\NotNull(message="Please provide a description of the payment")
+     * @Assert\NotBlank(message="Please provide a description of the payment")
      */
     private $description;
 
@@ -74,6 +75,7 @@ class TakePaymentCommand implements CommandInterface
      * @var EmailAddress
      *
      * @Assert\NotNull(message="Please provide the user's email address")
+     * @Assert\Type(type="\ValueObjects\Web\EmailAddress", message="Please provide the user's email address")
      */
     private $userEmail;
 
