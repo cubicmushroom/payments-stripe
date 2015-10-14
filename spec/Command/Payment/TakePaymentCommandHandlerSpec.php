@@ -23,6 +23,7 @@ use Omnipay\Stripe\Message\PurchaseRequest;
 use Omnipay\Stripe\Message\Response;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use ValueObjects\Web\EmailAddress;
 
@@ -114,7 +115,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         Gateway $gateway,
         PurchaseRequest $purchaseRequest,
         Response $response,
-        PaymentRepositoryInterface $repository
+        PaymentRepositoryInterface $repository,
+        LoggerInterface $logger
     ) {
         // Command
         /** @noinspection PhpUndefinedMethodInspection */
@@ -137,8 +139,9 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $response->getTransactionReference()->willReturn(self::STRIPE_PAYMENT_ID);
 
+        /** @see TakePaymentCommandHandler::create() */
         /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
+        $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository, $logger]);
     }
 
 
@@ -173,10 +176,19 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     /**
      * @uses TakePaymentCommandHandler::_handle()
      */
-    function it_does_not_handle_other_commands()
-    {
+    function it_does_not_handle_other_commands(
+        /** @noinspection PhpDocSignatureInspection */
+        LoggerInterface $logger
+    ) {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldThrow(InvalidCommandException::class)->during('handle', [new DummyCommand]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $logger->error(
+            Argument::containingString(
+                TakePaymentCommandHandler::class.' cannot handle commands of type '.DummyCommand::class
+            )
+        )->shouldHaveBeenCalled();
     }
 
 

@@ -17,6 +17,7 @@ use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedExce
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\Response;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -27,7 +28,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @package CubicMushroom\Payments\Stripe
  *
- * @see \spec\CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandlerSpec
+ * @see     \spec\CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandlerSpec
  *
  * @todo    - Add Logging to all exception throws
  */
@@ -39,6 +40,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      * @param EmitterInterface           $emitter
      * @param Gateway                    $gateway
      * @param PaymentRepositoryInterface $repository
+     * @param LoggerInterface            $logger
      *
      * @return static
      */
@@ -46,13 +48,15 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         ValidatorInterface $validator,
         EmitterInterface $emitter,
         Gateway $gateway,
-        PaymentRepositoryInterface $repository
+        PaymentRepositoryInterface $repository,
+        LoggerInterface $logger
     ) {
         /** @var self $handler */
         $handler = parent::createBasic($validator, $emitter);
 
         $handler->gateway    = $gateway;
         $handler->repository = $repository;
+        $handler->logger     = $logger;
 
         return $handler;
     }
@@ -67,6 +71,11 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      * @var PaymentRepositoryInterface
      */
     protected $repository;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
 
     /**
@@ -87,8 +96,6 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function _handle(CommandInterface $command)
     {
-        $this->validator->validate($command);
-
         $payment = $this->convertCommandToPayment($command);
 
         try {
