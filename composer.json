@@ -29,6 +29,8 @@
   },
   "require-dev"      : {
     "phpspec/phpspec"        : "dev-master",
-    "codeception/codeception": "^2.1"
+    "codeception/codeception": "^2.1",
+    "doctrine/annotations": "^1.2",
+    "doctrine/cache": "^1.4"
   }
 }
