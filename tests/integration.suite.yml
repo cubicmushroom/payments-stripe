@@ -1,0 +1,5 @@
+class_name: CodeWizard
+modules:
+    enabled:
+        - \CubicMushroom\Payments\Stripe\Helper\Code
+        - Asserts
