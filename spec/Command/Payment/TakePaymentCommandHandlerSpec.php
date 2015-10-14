@@ -247,10 +247,10 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $logger->error(
             Argument::containingString(
-                "Exception throw while handling {$commandClass} command... Unable to save payment details before " .
+                "Exception throw while handling {$commandClass} command... Unable to save payment details before ".
                 "processing"
             )
-        )->shouldBeCalled();
+        )->shouldHaveBeenCalled();
     }
 
 
@@ -294,7 +294,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpDocSignatureInspection */
         PaymentRepositoryInterface $repository,
         Gateway $gateway,
-        TakePaymentCommand $command
+        TakePaymentCommand $command,
+        LoggerInterface $logger
     ) {
         $this->setRepositoryMethodExpectations($repository);
         $this->clearRepositoryMarkAsPaidExpectation($repository);
@@ -303,6 +304,16 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $gateway->purchase(Argument::any())->willThrow(new \Exception);
 
         $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $commandClass = get_class($command->getWrappedObject());
+        /** @noinspection PhpUndefinedMethodInspection */
+        $logger->error(
+            Argument::containingString(
+                "Exception throw while handling {$commandClass} command... Failed to process payment with the Stripe " .
+                "payment gateway"
+            )
+        )->shouldHaveBeenCalled();
     }
 
 
@@ -377,6 +388,10 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $emitter->emit(Argument::type(TakePaymentFailureEvent::class))->shouldHaveBeenCalled();
     }
 
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Protected helper methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Sets the expected calls & responses on PaymentRepositoryInterface stub
