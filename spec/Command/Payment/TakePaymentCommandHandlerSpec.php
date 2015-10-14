@@ -232,7 +232,8 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     function it_should_throw_a_payment_failed_exception_if_unable_to_save_unpaid_payment_details(
         /** @noinspection PhpDocSignatureInspection */
         TakePaymentCommand $command,
-        PaymentRepositoryInterface $repository
+        PaymentRepositoryInterface $repository,
+        LoggerInterface $logger
     ) {
         /** @noinspection PhpUndefinedMethodInspection */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
@@ -240,6 +241,16 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $repository->savePaymentBeforeProcessing(Argument::any())->willThrow(SavePaymentFailedException::class);
 
         $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $commandClass = get_class($command->getWrappedObject());
+        /** @noinspection PhpUndefinedMethodInspection */
+        $logger->error(
+            Argument::containingString(
+                "Exception throw while handling {$commandClass} command... Unable to save payment details before " .
+                "processing"
+            )
+        )->shouldBeCalled();
     }
 
 
