@@ -6,7 +6,10 @@ use CubicMushroom\Payments\Stripe\Step\Integration\CommandValidationWizard;
 $I = new CommandValidationWizard($scenario);
 $I->wantTo('check an empty take payment command does not validate');
 
+// Setup test subjects
 $command = new TakePaymentCommand();
+
+// Perform tests
 $I->validateCommand($command);
 $I->expectTheFollowingValidationErrors(
     [
