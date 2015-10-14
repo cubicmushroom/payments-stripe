@@ -27,6 +27,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @package CubicMushroom\Payments\Stripe
  *
+ * @see \spec\CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandlerSpec
+ *
  * @todo    - Add Logging to all exception throws
  */
 class TakePaymentCommandHandler extends AbstractCommandHandler
