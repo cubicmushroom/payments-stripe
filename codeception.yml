@@ -1,5 +1,5 @@
 namespace: CubicMushroom\Payments\Stripe
-actor: Tester
+actor: Wizard
 paths:
     tests: tests
     log: tests/_output
