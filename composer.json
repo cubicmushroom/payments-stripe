@@ -25,7 +25,8 @@
     "omnipay/stripe"                    : "^2.0",
     "mathiasverraes/money"              : "^1.0",
     "cubicmushroom/hexagonal-components": "dev-master",
-    "nicolopignatelli/valueobjects"     : "^3.0"
+    "nicolopignatelli/valueobjects"     : "^3.0",
+    "psr/log": "^1.0"
   },
   "require-dev"      : {
     "phpspec/phpspec"        : "dev-master",
