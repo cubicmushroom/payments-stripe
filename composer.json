@@ -1,48 +1,48 @@
 {
-  "name"             : "cubicmushroom/payments-stripe",
-  "description"      : "Package for handling basic Stripe payment gateway operations",
-  "version"          : "0.0.0",
-  "type"             : "library",
-  "license"          : "ISC",
-  "authors"          : [
+  "name": "cubicmushroom/payments-stripe",
+  "description": "Package for handling basic Stripe payment gateway operations",
+  "version": "1.0.0",
+  "type": "library",
+  "license": "ISC",
+  "authors": [
     {
-      "name" : "Toby Griffiths",
+      "name": "Toby Griffiths",
       "email": "toby@cubicmushroom.co.uk"
     }
   ],
   "minimum-stability": "stable",
-  "autoload"         : {
+  "autoload": {
     "psr-4": {
       "CubicMushroom\\Payments\\Stripe\\": "src/"
     }
   },
-  "repositories"     : [
+  "repositories": [
     {
       "type": "vcs",
-      "url" : "https://github.com/toby-griffiths/phpspec"
+      "url": "https://github.com/toby-griffiths/phpspec"
     }
   ],
-  "require"          : {
-    "omnipay/stripe"                    : "^2.0",
-    "mathiasverraes/money"              : "^1.0",
+  "require": {
+    "omnipay/stripe": "^2.0",
+    "mathiasverraes/money": "^1.0",
     "cubicmushroom/hexagonal-components": "^1.0",
-    "nicolopignatelli/valueobjects"     : "^3.0",
-    "psr/log"                           : "^1.0"
+    "nicolopignatelli/valueobjects": "^3.0",
+    "psr/log": "^1.0"
   },
-  "require-dev"      : {
-    "phpspec/phpspec"        : "dev-master",
+  "require-dev": {
+    "phpspec/phpspec": "dev-master",
     "codeception/codeception": "^2.1",
-    "doctrine/annotations"   : "^1.2",
-    "doctrine/cache"         : "^1.4"
+    "doctrine/annotations": "^1.2",
+    "doctrine/cache": "^1.4"
   },
-  "scripts"          : {
+  "scripts": {
     "post-install-cmd": [
       "gulp test"
     ],
-    "post-update-cmd" : [
+    "post-update-cmd": [
       "gulp test"
     ],
-    "pre-archive-cmd" : [
+    "pre-archive-cmd": [
       "gulp test"
     ]
   }
