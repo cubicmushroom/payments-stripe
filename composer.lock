@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "75cee937323a4592a91ac373ba32f45e",
+    "hash": "5db6bd66026ccd9dea32a7312417a1ec",
     "packages": [
         {
             "name": "cubicmushroom/hexagonal-components",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cubicmushroom/hexagonal-components.git",
-                "reference": "a1f40fb5c6e204d6cf6aba2dd21832de4573563c"
+                "reference": "b46aa6b47d2e87657d386382651457ebedf18e24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/a1f40fb5c6e204d6cf6aba2dd21832de4573563c",
-                "reference": "a1f40fb5c6e204d6cf6aba2dd21832de4573563c",
+                "url": "https://api.github.com/repos/cubicmushroom/hexagonal-components/zipball/b46aa6b47d2e87657d386382651457ebedf18e24",
+                "reference": "b46aa6b47d2e87657d386382651457ebedf18e24",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "Useful elements for implementing hexagonal architecture",
-            "time": "2015-10-14 10:42:39"
+            "time": "2015-10-15 11:09:59"
         },
         {
             "name": "guzzle/guzzle",
@@ -2365,16 +2365,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.12",
+            "version": "4.8.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "00194eb95989190a73198390ceca081ad3441a7f"
+                "reference": "be067d6105286b74272facefc2697038f8807b77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/00194eb95989190a73198390ceca081ad3441a7f",
-                "reference": "00194eb95989190a73198390ceca081ad3441a7f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/be067d6105286b74272facefc2697038f8807b77",
+                "reference": "be067d6105286b74272facefc2697038f8807b77",
                 "shasum": ""
             },
             "require": {
@@ -2433,7 +2433,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-12 03:36:47"
+            "time": "2015-10-14 13:49:40"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3223,7 +3223,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cubicmushroom/hexagonal-components": 20,
         "phpspec/phpspec": 20
     },
     "prefer-stable": false,

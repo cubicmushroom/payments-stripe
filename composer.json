@@ -24,15 +24,15 @@
   "require"          : {
     "omnipay/stripe"                    : "^2.0",
     "mathiasverraes/money"              : "^1.0",
-    "cubicmushroom/hexagonal-components": "dev-master",
+    "cubicmushroom/hexagonal-components": "^1.0",
     "nicolopignatelli/valueobjects"     : "^3.0",
-    "psr/log": "^1.0"
+    "psr/log"                           : "^1.0"
   },
   "require-dev"      : {
     "phpspec/phpspec"        : "dev-master",
     "codeception/codeception": "^2.1",
-    "doctrine/annotations": "^1.2",
-    "doctrine/cache": "^1.4"
+    "doctrine/annotations"   : "^1.2",
+    "doctrine/cache"         : "^1.4"
   },
   "scripts"          : {
     "post-install-cmd": ["gulp test"],
