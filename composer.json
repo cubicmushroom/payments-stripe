@@ -1,6 +1,7 @@
 {
   "name"             : "cubicmushroom/payments-stripe",
   "description"      : "Package for handling basic Stripe payment gateway operations",
+  "version"          : "0.0.0",
   "type"             : "library",
   "license"          : "ISC",
   "authors"          : [
@@ -35,8 +36,14 @@
     "doctrine/cache"         : "^1.4"
   },
   "scripts"          : {
-    "post-install-cmd": ["gulp test"],
-    "post-update-cmd" : ["gulp test"],
-    "pre-archive-cmd" : ["gulp test"]
+    "post-install-cmd": [
+      "gulp test"
+    ],
+    "post-update-cmd" : [
+      "gulp test"
+    ],
+    "pre-archive-cmd" : [
+      "gulp test"
+    ]
   }
 }
