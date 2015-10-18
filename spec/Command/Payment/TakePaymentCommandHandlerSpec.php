@@ -89,18 +89,18 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $this->currency                 = new Currency(self::CURRENCY);
         $this->cost                     = new Money(self::AMOUNT, $this->currency);
         $this->userEmail                = new EmailAddress(self::USER_EMAIL);
-        $this->expectedUnpaidPayment    = new Payment(
-            $this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail
+        $this->expectedUnpaidPayment    = Payment::createUnpaid(
+            $this->cost,
+            self::TOKEN,
+            self::DESCRIPTION,
+            $this->userEmail
         );
         $this->paymentId                = new PaymentId(self::PAYMENT_ID);
         $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
-        $this->expectedProcessedPayment = (
-        new Payment(
-            $this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail
-        )
-        )->assignId($this->paymentId)
-         ->assignGatewayId($this->stripePaymentId)
-         ->markAsPaid();
+        $this->expectedProcessedPayment = clone $this->expectedUnpaidPayment;
+        $this->expectedProcessedPayment
+            ->assignId($this->paymentId)
+            ->hasBeenPaidWithGatewayTransaction($this->stripePaymentId);
     }
 
 
@@ -310,7 +310,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $logger->error(
             Argument::containingString(
-                "Exception throw while handling {$commandClass} command... Failed to process payment with the Stripe " .
+                "Exception throw while handling {$commandClass} command... Failed to process payment with the Stripe ".
                 "payment gateway"
             )
         )->shouldHaveBeenCalled();
@@ -331,9 +331,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $this->handle($command);
 
         $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail);
-        $expectedPayment
-            ->assignGatewayId(new StripePaymentId(self::STRIPE_PAYMENT_ID))
-            ->markAsPaid();
+        $expectedPayment->hasBeenPaidWithGatewayTransaction(new StripePaymentId(self::STRIPE_PAYMENT_ID));
     }
 
 

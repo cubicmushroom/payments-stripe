@@ -138,7 +138,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function convertCommandToPayment(TakePaymentCommand $command)
     {
-        $payment = new Payment(
+        $payment = Payment::createUnpaid(
             $command->getCost(),
             $command->getToken(),
             $command->getDescription(),
@@ -157,9 +157,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function updatePaymentWithStripeCharge(Payment $payment, Response $purchaseResponse)
     {
-        $payment
-            ->assignGatewayId(new StripePaymentId($purchaseResponse->getTransactionReference()))
-            ->markAsPaid();
+        $payment->hasBeenPaidWithGatewayTransaction(new StripePaymentId($purchaseResponse->getTransactionReference()));
 
         try {
             $this->repository->markAsPaid($payment);
