@@ -31,7 +31,7 @@ class Payment extends Model implements ModelInterface
     /**
      * @var StripePaymentId
      */
-    private $gatewayId;
+    protected $gatewayId;
 
     /**
      * @var Money
@@ -41,25 +41,25 @@ class Payment extends Model implements ModelInterface
     /**
      * @var string
      */
-    private $token;
+    protected $token;
 
     /**
      * @var string
      */
-    private $description;
+    protected $description;
 
     /**
      * @var array
      */
-    private $metaData;
+    protected $metaData;
 
 
-    private $isPaid;
+    protected $isPaid;
 
     /**
      * @var EmailAddress
      */
-    private $userEmail;
+    protected $userEmail;
 
 
     // -----------------------------------------------------------------------------------------------------------------
