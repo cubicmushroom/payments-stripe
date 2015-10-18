@@ -85,7 +85,10 @@ class PaymentSpec extends ObjectBehavior
         // @todo - Make $token into a value object
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         /** @noinspection SpellCheckingInspection */
-        $this->beConstructedWith($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail, $this->metaData);
+        $this->beConstructedThrough(
+            'createUnpaid',
+            [$this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail, $this->metaData]
+        );
     }
 
 
@@ -109,69 +112,21 @@ class PaymentSpec extends ObjectBehavior
      */
     function it_returns_all_the_details()
     {
+        /** @var self|Payment $this */
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getAmount()->shouldReturn(self::AMOUNT);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getCurrency()->shouldReturn($this->currency);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->getCost()->shouldReturn($this->cost);
+        $this->getCurrency()->shouldReturn(self::CURRENCY);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getDescription()->shouldReturn(self::DESCRIPTION);
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getUserEmail()->shouldReturn($this->userEmail);
-    }
-
-
-    /**
-     * @uses Payment::getToken()
-     */
-    function it_returns_the_token()
-    {
+        $this->getUserEmail()->shouldReturn(self::USER_EMAIL);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getToken()->shouldReturn(self::TOKEN);
-    }
-
-
-    /**
-     * @uses Payment::getDescription()
-     */
-    function it_returns_the_description()
-    {
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getDescription()->shouldReturn(self::DESCRIPTION);
-    }
-
-
-    /**
-     * @uses Payment::getDescription()
-     */
-    function it_returns_the_user_email()
-    {
+        $this->getMetaData()->shouldReturn(json_encode($this->metaData));
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->getUserEmail()->shouldReturn($this->userEmail);
-    }
-
-
-    /**
-     * @uses Payment::getMetaData()
-     */
-    function it_returns_metadata()
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->getMetaData()->shouldReturn($this->metaData);
-    }
-
-
-    /**
-     * @uses Payment::assignGatewayId()
-     * @uses Payment::gatewayId()
-     */
-    function it_can_have_its_gateway_id_set_and_retrieved()
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assignGatewayId($this->gatewayId)->shouldBeAnInstanceOf(Payment::class);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->gatewayId()->shouldReturn($this->gatewayId);
+        $this->isPaid()->shouldReturn(false);
     }
 
 
@@ -191,49 +146,24 @@ class PaymentSpec extends ObjectBehavior
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
-                'metadata'    => array_merge($this->metaData, ['paymentId' => self::ID, 'userEmail' => self::USER_EMAIL]),
+                'metadata'    => array_merge(
+                    $this->metaData,
+                    ['paymentId' => self::ID, 'userEmail' => self::USER_EMAIL]
+                ),
             ]
         );
     }
 
 
-    function it_can_have_its_id_assigned_and_retrieved()
+    function it_can_be_marked_as_paid()
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assignId($this->id)->shouldBeAnInstanceOf(Payment::class);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->id()->shouldReturn($this->id);
-    }
+        /** @var self|Payment $this */
+        $stripeId = new StripePaymentId(self::GATEWAY_ID);
+        $this->hasBeenPaidWithGatewayTransaction($stripeId);
 
-
-    function its_id_should_be_immutable_once_set()
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->assignId($this->id)->shouldBeAnInstanceOf(Payment::class);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->shouldThrow()->during('assignId', [$this->id]);
-    }
-
-
-    /**
-     * @uses Payment::isPaid()
-     */
-    function it_should_default_to_unpaid()
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->isPaid()->shouldReturn(false);
-    }
-
-
-    /**
-     * @uses Payment::markAsPaid()
-     * @uses Payment::isPaid()
-     */
-    function it_should_be_possible_to_mark_as_paid()
-    {
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->markAsPaid()->shouldReturnAnInstanceOf(Payment::class);
         /** @noinspection PhpUndefinedMethodInspection */
         $this->isPaid()->shouldReturn(true);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->getGatewayId()->shouldBeLike($stripeId);
     }
 }

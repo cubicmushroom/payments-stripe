@@ -5,7 +5,6 @@ namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 use CubicMushroom\Hexagonal\Domain\Generic\Model;
 use CubicMushroom\Hexagonal\Domain\Generic\ModelInterface;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
-use Money\Currency;
 use Money\Money;
 use ValueObjects\Web\EmailAddress;
 
@@ -24,46 +23,50 @@ class Payment extends Model implements ModelInterface
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * @var PaymentId
+     * @var string
      */
-    protected $id;
+    protected $gatewayId;
 
     /**
-     * @var StripePaymentId
+     * @var int
      */
-    private $gatewayId;
-
-    /**
-     * @var Money
-     */
-    protected $cost;
+    protected $amount;
 
     /**
      * @var string
      */
-    private $token;
+    protected $currency;
 
     /**
      * @var string
      */
-    private $description;
+    protected $token;
 
     /**
-     * @var array
+     * @var string
      */
-    private $metaData;
-
-
-    private $isPaid;
+    protected $description;
 
     /**
-     * @var EmailAddress
+     * @var string
      */
-    private $userEmail;
+    protected $userEmail;
+
+    /**
+     * JSON encoded data
+     *
+     * @var string
+     */
+    protected $metaData;
+
+    /**
+     * @var bool
+     */
+    protected $paid;
 
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Constructor
+    // Constructor methods
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -72,16 +75,41 @@ class Payment extends Model implements ModelInterface
      * @param string       $description Description of what the payment is for
      * @param EmailAddress $userEmail
      * @param array        $metaData
+     *
+     * @return static
      */
-    public function __construct(Money $cost, $token, $description, EmailAddress $userEmail, array $metaData = [])
-    {
-        $this->cost        = $cost;
-        $this->token       = $token;
-        $this->description = $description;
-        $this->userEmail   = $userEmail;
-        $this->metaData    = $metaData;
-        $this->isPaid      = false;
+    public static function createUnpaid(
+        Money $cost,
+        $token,
+        $description,
+        EmailAddress $userEmail,
+        array $metaData = []
+    ) {
+        /** @var Payment $payment */
+        $payment = new static();
+
+        $payment
+            ->willCosts($cost)
+            ->willUseToken($token)
+            ->isDescribedBy($description)
+            ->belongsTo($userEmail)
+            ->hasExtraData($metaData);
+
+        return $payment;
     }
+
+
+    /**
+     * Payment constructor.
+     */
+    public function __construct()
+    {
+        $this->hasNotBeenPaid();
+    }
+
+
+
+
 
     // -----------------------------------------------------------------------------------------------------------------
     // Abstract Model methods
@@ -98,56 +126,160 @@ class Payment extends Model implements ModelInterface
     }
 
 
-    /**
-     * @return StripePaymentId
-     */
-    public function gatewayId()
-    {
-        return $this->gatewayId;
-    }
-
+    // -----------------------------------------------------------------------------------------------------------------
+    // Intention methods
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * @param StripePaymentId $gatewayId
+     * @param Money $cost
      *
-     * @return Payment
+     * @return $this
      */
-    public function assignGatewayId(StripePaymentId $gatewayId)
+    public function willCosts(Money $cost)
     {
-        $this->gatewayId = $gatewayId;
+        $this->amount   = $cost->getAmount();
+        $this->currency = $cost->getCurrency()->getName();
 
         return $this;
     }
 
 
     /**
-     * Returns the amount of the payment a an integer
+     * @param $token
      *
+     * @return $this
+     */
+    public function willUseToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
+    public function isDescribedBy($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+
+    /**
+     * @param EmailAddress $email
+     *
+     * @return $this
+     */
+    public function belongsTo(EmailAddress $email)
+    {
+        $this->userEmail = (string)$email;
+
+        return $this;
+    }
+
+
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function hasExtraData(array $data)
+    {
+        $this->metaData = json_encode($data);
+
+        return $this;
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function hasNotBeenPaid()
+    {
+        $this->paid = false;
+
+        return $this;
+    }
+
+
+    /**
+     * @param StripePaymentId $gatewayId
+     *
+     * @return $this
+     */
+    public function hasBeenPaidWithGatewayTransaction(StripePaymentId $gatewayId)
+    {
+        $this->paid      = true;
+        $this->gatewayId = $gatewayId->getValue();
+
+        return $this;
+    }
+
+
+    /**
+     * Used to extract the details to pass to the Stripe payment gateway
+     *
+     * @return array ['amount' => string, 'currency' => string, 'token' =. string, 'description' => string]
+     */
+    public function getGatewayPurchaseArray()
+    {
+        $metaData = ($this->metaData ? json_decode($this->metaData, true) : []);
+
+        return [
+            'amount'      => $this->amount,
+            'currency'    => $this->currency,
+            'token'       => $this->token,
+            'description' => $this->description,
+            'metadata'    => array_merge_recursive(
+                $metaData,
+                ['paymentId' => $this->id, 'userEmail' => $this->userEmail]
+            ),
+        ];
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Getters
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getGatewayId()
+    {
+        return $this->gatewayId;
+    }
+
+
+    /**
      * @return int
      */
     public function getAmount()
     {
-        return $this->cost->getAmount();
+        return $this->amount;
     }
 
 
     /**
-     * Returns the currency part of the $cost property
-     *
-     * @return Currency
+     * @return string
      */
     public function getCurrency()
     {
-        return $this->cost->getCurrency();
-    }
-
-
-    /**
-     * @return Money
-     */
-    public function getCost()
-    {
-        return $this->cost;
+        return $this->currency;
     }
 
 
@@ -170,16 +302,7 @@ class Payment extends Model implements ModelInterface
 
 
     /**
-     * @return EmailAddress
-     */
-    public function getUserEmail()
-    {
-        return $this->userEmail;
-    }
-
-
-    /**
-     * @return array
+     * @return string
      */
     public function getMetaData()
     {
@@ -188,43 +311,19 @@ class Payment extends Model implements ModelInterface
 
 
     /**
-     * Used to extract the details to pass to the Stripe payment gateway
-     *
-     * @return array ['amount' => string, 'currency' => string, 'token' =. string, 'description' => string]
+     * @return string
      */
-    public function getGatewayPurchaseArray()
+    public function getUserEmail()
     {
-        return [
-            'amount'      => $this->cost->getAmount(),
-            'currency'    => $this->cost->getCurrency()->getName(),
-            'token'       => $this->token,
-            'description' => $this->description,
-            'metadata'    => array_merge_recursive(
-                $this->metaData,
-                ['paymentId' => $this->id->getValue(), 'userEmail' => (string)$this->userEmail]
-            ),
-        ];
+        return $this->userEmail;
     }
 
 
     /**
-     * Returns a boolean value indicating whether the payment has been processed (or captured in Stripe terms)
-     *
-     * @return bool
+     * @return boolean
      */
     public function isPaid()
     {
-        return $this->isPaid;
-    }
-
-
-    /**
-     *
-     */
-    public function markAsPaid()
-    {
-        $this->isPaid = true;
-
-        return $this;
+        return $this->paid;
     }
 }
