@@ -245,39 +245,42 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_call_to_confirm_payment_with_stripe(
-//        /** @noinspection PhpDocSignatureInspection */
-//        PaymentRepositoryInterface $repository,
-//        Gateway $gateway,
-//        TakePaymentCommand $command,
-//        PurchaseRequest $purchaseRequest
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $gateway->purchase(
-//            [
-//                'amount'      => self::AMOUNT_STR,
-//                'currency'    => self::CURRENCY,
-//                'token'       => self::TOKEN,
-//                'description' => self::DESCRIPTION,
-//                'metadata'    => [
-//                    'paymentId' => self::PAYMENT_ID,
-//                    'userEmail' => self::USER_EMAIL,
-//                ],
-//            ]
-//        )
-//                ->willReturn($purchaseRequest)
-//                ->shouldBeCalled();
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->handle($command);
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_call_to_confirm_payment_with_stripe(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        PurchaseRequest $purchaseRequest
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(
+            [
+                'amount'      => self::AMOUNT_STR,
+                'currency'    => self::CURRENCY,
+                'token'       => self::TOKEN,
+                'description' => self::DESCRIPTION,
+                'metadata'    => array_merge(
+                    $this->metadata,
+                    [
+                        'paymentId' => self::PAYMENT_ID,
+                        'userEmail' => self::USER_EMAIL,
+                    ]
+                ),
+            ]
+        )
+                ->willReturn($purchaseRequest)
+                ->shouldBeCalled();
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+    }
+
+
 //    /**
 //     * @uses TakePaymentCommandHandler::_handle()
 //     */
