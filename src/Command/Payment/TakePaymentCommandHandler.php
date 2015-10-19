@@ -193,7 +193,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function getSuccessEvent(CommandInterface $command)
     {
-        return new TakePaymentSuccessEvent($this->paymentId);
+        return TakePaymentSuccessEvent::create($this->paymentId);
     }
 
 
