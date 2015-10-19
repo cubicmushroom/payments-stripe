@@ -14,7 +14,7 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
-use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentRejectedException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentNotAuthorisedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
@@ -127,9 +127,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
             if (!$purchaseResponse->isSuccessful()) {
-                throw PaymentRejectedException::createWithPayment($payment, $purchaseResponse->getMessage());
+                throw PaymentNotAuthorisedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
-        } catch (PaymentRejectedException $paymentFailedException) {
+        } catch (PaymentNotAuthorisedException $paymentFailedException) {
             throw $paymentFailedException;
         } catch (\Exception $gatewayException) {
             $this->logError('There was a problem with the Stripe gateway', $gatewayException);
