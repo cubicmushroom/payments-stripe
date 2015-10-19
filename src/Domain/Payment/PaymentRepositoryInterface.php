@@ -2,6 +2,7 @@
 
 namespace CubicMushroom\Payments\Stripe\Domain\Payment;
 
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\CreatePaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 
 /**
@@ -20,7 +21,7 @@ interface PaymentRepositoryInterface
      *
      * @return PaymentId
      *
-     * @throws SavePaymentFailedException
+     * @throws CreatePaymentFailedException
      */
     public function savePaymentBeforeProcessing(Payment $payment);
 
