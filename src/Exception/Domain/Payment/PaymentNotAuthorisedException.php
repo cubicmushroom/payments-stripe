@@ -13,6 +13,6 @@ namespace CubicMushroom\Payments\Stripe\Exception\Domain\Payment;
  *
  * @package CubicMushroom\Payments
  */
-class PaymentRejectedException extends AbstractPaymentException
+class PaymentNotAuthorisedException extends AbstractPaymentException
 {
 }
