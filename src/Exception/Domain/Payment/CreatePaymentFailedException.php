@@ -15,7 +15,7 @@ use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
  *
  * @package CubicMushroom\Payments
  */
-class CreatePaymentFailedException extends AbstractPaymentException implements PublicSafeMessageInterface
+class CreatePaymentFailedException extends PaymentFailedException implements PublicSafeMessageInterface
 {
 
     /**
