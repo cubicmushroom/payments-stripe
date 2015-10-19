@@ -98,10 +98,10 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      *
      * @param CommandInterface|TakePaymentCommand $command
      *
-     * @throws PaymentRejectedException if the gateway have not authorised the payment
-     * @throws PaymentFailedException if something else goes wrong with the payment request
-     * @throws SavePaymentFailedException if the payment succeeds, but something goes wrong when updtaing the payment
-     *         record
+     * @throws PaymentFailedException     if unable to create new payment record, or the gateway authorisation failed
+     *                                    form any reason
+     * @throws SavePaymentFailedException if the payment succeeds, but something goes wrong when updating the payment
+     *                                    record
      */
     protected function _handle(CommandInterface $command)
     {
@@ -112,40 +112,39 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         try {
             // We clone the payment object here, so PHPSpec can test it, until the following issue is resolved…
             // https://github.com/phpspec/phpspec/issues/789
-            $this->paymentId = $this->repository->savePaymentBeforeProcessing(clone $payment);
+            $this->paymentId = $this->repository->savePaymentBeforeProcessing($payment);
             $payment->assignId($this->paymentId);
+
+            $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
+            $purchaseResponse = $purchaseRequest->send();
+            if (!$purchaseResponse->isSuccessful()) {
+                throw PaymentNotAuthorisedException::createWithPayment($payment, $purchaseResponse->getMessage());
+            }
+        } catch (PaymentFailedException $exception) {
+            // These exceptions will be publicly safe, so just throw themhttps:/https://github.com/phpspec/phpspec/issues/789https://github.com/phpspec/phpspec/issues/789https://github.com/phpspec/phpspec/issues/789https://github.com/phpspec/phpspec/issues/789/github.com/phpspec/phpspec/issues/789
+            throw $exception;
         } catch (\Exception $exception) {
-            throw CreatePaymentFailedException::createWithPayment(
+            throw PaymentFailedException::createWithPayment(
                 $payment,
-                'Unable to save payment details before processing',
+                sprintf('An unrecognised exception (%s) has been thrown', get_class($exception)),
                 0,
                 $exception
             );
         }
 
         try {
-            $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
-            $purchaseResponse = $purchaseRequest->send();
-            if (!$purchaseResponse->isSuccessful()) {
-                throw PaymentNotAuthorisedException::createWithPayment($payment, $purchaseResponse->getMessage());
-            }
-        } catch (PaymentNotAuthorisedException $paymentFailedException) {
-            // Just throw it
-            throw $paymentFailedException;
-        } catch (\Exception $gatewayException) {
-            $this->logError('There was a problem with the Stripe gateway', $gatewayException);
-            throw PaymentFailedException::createWithPayment(
-                $payment,
-                'Failed to process payment with the Stripe payment gateway',
-                0,
-                $gatewayException
-            );
-        }
-
-        try {
             $this->updatePaymentWithStripeCharge($payment, $purchaseResponse);
-        } catch (SavePaymentFailedException $e) {
-            throw $e;
+        } catch (\Exception $exception) {
+            // Wrap in SavePaymentFailedException if need be to provide public exception
+            if ($exception instanceof SavePaymentFailedException) {
+                throw $exception;
+            }
+            throw SavePaymentFailedException::createWithPayment(
+                $payment,
+                sprintf('An unrecognised exception (%s) has been thrown', get_class($exception)),
+                0,
+                $exception
+            );
         }
     }
 
