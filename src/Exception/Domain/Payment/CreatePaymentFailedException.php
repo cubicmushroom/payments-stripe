@@ -8,11 +8,23 @@
 
 namespace CubicMushroom\Payments\Stripe\Exception\Domain\Payment;
 
+use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
+
 /**
  * Class CreatePaymentFailed
  *
  * @package CubicMushroom\Payments
  */
-class CreatePaymentFailedException extends AbstractPaymentException
+class CreatePaymentFailedException extends AbstractPaymentException implements PublicSafeMessageInterface
 {
+
+    /**
+     * Returns a message to display to the website user
+     *
+     * @return string
+     */
+    public function getPublicMessage()
+    {
+        return 'Your payment has not been processed.  Please try again.';
+    }
 }
