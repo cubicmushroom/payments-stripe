@@ -11,6 +11,8 @@ use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
+use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\CreatePaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentNotAuthorisedException;
@@ -366,58 +368,58 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_emit_a_success_event_if_all_ok(
-//        /** @noinspection PhpDocSignatureInspection */
-//        PaymentRepositoryInterface $repository,
-//        Gateway $gateway,
-//        TakePaymentCommand $command,
-//        PurchaseRequest $purchaseRequest,
-//        EmitterInterface $emitter
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $gateway->purchase(Argument::any())
-//                ->willReturn($purchaseRequest)
-//                ->shouldBeCalled();
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->handle($command);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $emitter->emit(Argument::type(TakePaymentSuccessEvent::class))->shouldHaveBeenCalled();
-//    }
-//
-//
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_emit_a_failure_event_if_not_ok(
-//        /** @noinspection PhpDocSignatureInspection */
-//        PaymentRepositoryInterface $repository,
-//        Gateway $gateway,
-//        TakePaymentCommand $command,
-//        EmitterInterface $emitter
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//        $this->clearRepositoryMarkAsPaidExpectation($repository);
-//
-//        $gatewayException = new PaymentFailedException('Failed to process payment with the Stripe payment gateway');
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $gateway->purchase(Argument::any())->willThrow($gatewayException);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->shouldThrow($gatewayException)->during('handle', [$command]);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $emitter->emit(Argument::type(TakePaymentFailureEvent::class))->shouldHaveBeenCalled();
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_emit_a_success_event_if_all_ok(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        PurchaseRequest $purchaseRequest,
+        EmitterInterface $emitter
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())
+                ->willReturn($purchaseRequest)
+                ->shouldBeCalled();
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $emitter->emit(Argument::type(TakePaymentSuccessEvent::class))->shouldHaveBeenCalled();
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_emit_a_failure_event_if_not_ok(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        Gateway $gateway,
+        TakePaymentCommand $command,
+        EmitterInterface $emitter
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
+
+        $gatewayException = new PaymentFailedException('Failed to process payment with the Stripe payment gateway');
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())->willThrow($gatewayException);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->shouldThrow($gatewayException)->during('handle', [$command]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $emitter->emit(Argument::type(TakePaymentFailureEvent::class))->shouldHaveBeenCalled();
+    }
+
+
     // -----------------------------------------------------------------------------------------------------------------
     // Protected helper methods
     // -----------------------------------------------------------------------------------------------------------------
