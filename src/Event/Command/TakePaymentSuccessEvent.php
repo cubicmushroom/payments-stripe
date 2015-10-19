@@ -47,4 +47,13 @@ class TakePaymentSuccessEvent extends Event implements CommandSucceededEventInte
     }
 
 
+    /**
+     * @return PaymentId
+     */
+    public function getPaymentId()
+    {
+        return $this->paymentId;
+    }
+
+
 }
