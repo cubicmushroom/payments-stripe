@@ -36,7 +36,8 @@ use ValueObjects\Web\EmailAddress;
  */
 class TakePaymentCommandHandlerSpec extends ObjectBehavior
 {
-    const AMOUNT            = 999;
+    const AMOUNT            = 8500;
+    const AMOUNT_STR        = '85.00';
     const CURRENCY          = 'GBP';
     const TOKEN             = 'alshclldsacsab';
     const DESCRIPTION       = 'The great unknown is full of conclusion.';
@@ -269,7 +270,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(
             [
-                'amount'      => (self::AMOUNT / 100),
+                'amount'      => self::AMOUNT_STR,
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,

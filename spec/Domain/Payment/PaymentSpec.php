@@ -21,7 +21,8 @@ use ValueObjects\Web\EmailAddress;
  */
 class PaymentSpec extends ObjectBehavior
 {
-    const AMOUNT      = 999;
+    const AMOUNT      = 5000;
+    const AMOUNT_STR  = '50.00';
     const CURRENCY    = 'GBP';
     const TOKEN       = 'ugcashdcial';
     const DESCRIPTION = 'Try chopping seaweed tart garnished with honey.';
@@ -142,7 +143,7 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getGatewayPurchaseArray()->shouldReturn(
             [
-                'amount'      => (self::AMOUNT / 100),
+                'amount'      => self::AMOUNT_STR,
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
