@@ -3,6 +3,7 @@
 namespace CubicMushroom\Payments\Stripe\Event\Command;
 
 use CubicMushroom\Hexagonal\Event\CommandSucceededEventInterface;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Event\Events;
 use League\Event\Event;
 
@@ -15,6 +16,27 @@ use League\Event\Event;
  */
 class TakePaymentSuccessEvent extends Event implements CommandSucceededEventInterface
 {
+    /**
+     * @var PaymentId
+     */
+    protected $paymentId;
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+
+    public static function create(PaymentId $paymentId)
+    {
+        /** @var TakePaymentSuccessEvent $event */
+        $event = new static();
+
+        $event->paymentId = $paymentId;
+
+        return $event;
+    }
+
 
     /**
      * Sets the event name
