@@ -13,6 +13,7 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\CreatePaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentNotAuthorisedException;
 use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
@@ -281,43 +282,90 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_throw_a_payment_failed_exception_if_payment_not_processed_by_stripe_ok(
-//        /** @noinspection PhpDocSignatureInspection */
-//        PaymentRepositoryInterface $repository,
-//        Gateway $gateway,
-//        TakePaymentCommand $command
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//        $this->clearRepositoryMarkAsPaidExpectation($repository);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $gateway->purchase(Argument::any())->willThrow(new \Exception);
-//
-//        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
-//    }
-//
-//
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_store_a_successful_payment(
-//        /** @noinspection PhpDocSignatureInspection */
-//        TakePaymentCommand $command,
-//        PaymentRepositoryInterface $repository
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->handle($command);
-//
-//        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail);
-//        $expectedPayment->hasBeenPaidWithGatewayTransaction(new StripePaymentId(self::STRIPE_PAYMENT_ID));
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_throw_a_payment_failed_exception_if_unpaid_payment_not_saved(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        Gateway $gateway,
+        TakePaymentCommand $command
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())->willThrow(new CreatePaymentFailedException);
+
+        $this->shouldThrow(CreatePaymentFailedException::class)->during('handle', [$command]);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_throw_a_payment_not_authorised_exception_if_stripe_payment_gateway_rejects_request(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        TakePaymentCommand $command,
+        Response $response
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response->isSuccessful()->willReturn(false);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $response->getMessage()->willReturn('You have no money!');
+
+        // @todo - I'd like to test this exception more accurately, but currently required exact object match, rather
+        //         than like match
+        $this->shouldThrow(PaymentNotAuthorisedException::class)
+             ->during('handle', [$command]);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_throw_a_payment_failed_exception_if_stripe_payment_gateway_throws_an_exception(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        Gateway $gateway,
+        TakePaymentCommand $command
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+        $this->clearRepositoryMarkAsPaidExpectation($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $gateway->purchase(Argument::any())->willThrow(\Exception::class);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        // @todo - I'd like to test this exception more accurately, but currently required exact object match, rather
+        //         than like match
+        $this->shouldThrow(PaymentFailedException::class)
+             ->during('handle', [$command]);
+    }
+
+
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_store_a_successful_payment(
+        /** @noinspection PhpDocSignatureInspection */
+        TakePaymentCommand $command,
+        PaymentRepositoryInterface $repository
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        $expectedPayment = new Payment($this->cost, self::TOKEN, self::DESCRIPTION, $this->userEmail);
+        $expectedPayment->hasBeenPaidWithGatewayTransaction(new StripePaymentId(self::STRIPE_PAYMENT_ID));
+    }
+
+
 //    /**
 //     * @uses TakePaymentCommandHandler::_handle()
 //     */
@@ -391,19 +439,19 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();
     }
-//
-//
-//    /**
-//     * Clears the expected calls on PaymentRepositoryInterface stub markAsPaid() method
-//     *
-//     * @param PaymentRepositoryInterface $repository
-//     */
-//    protected function clearRepositoryMarkAsPaidExpectation(PaymentRepositoryInterface $repository)
-//    {
-//        /** @noinspection PhpVoidFunctionResultUsedInspection */
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
-//    }
+
+
+    /**
+     * Clears the expected calls on PaymentRepositoryInterface stub markAsPaid() method
+     *
+     * @param PaymentRepositoryInterface $repository
+     */
+    protected function clearRepositoryMarkAsPaidExpectation(PaymentRepositoryInterface $repository)
+    {
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpUndefinedMethodInspection */
+        $repository->markAsPaid($this->expectedProcessedPayment)->shouldNotBeCalled();
+    }
 }
 
 
