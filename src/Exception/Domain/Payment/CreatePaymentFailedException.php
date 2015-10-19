@@ -8,14 +8,12 @@
 
 namespace CubicMushroom\Payments\Stripe\Exception\Domain\Payment;
 
-use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
-
 /**
  * Class CreatePaymentFailed
  *
  * @package CubicMushroom\Payments
  */
-class CreatePaymentFailedException extends PaymentFailedException implements PublicSafeMessageInterface
+class CreatePaymentFailedException extends PaymentFailedException
 {
 
     /**

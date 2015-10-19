@@ -19,15 +19,6 @@ use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
  *
  * @package CubicMushroom\Payments\Stripe
  */
-class PaymentFailedException extends AbstractPaymentException implements PublicSafeMessageInterface
+abstract class PaymentFailedException extends AbstractPaymentException implements PublicSafeMessageInterface
 {
-    /**
-     * Returns a message to display to the website user
-     *
-     * @return string
-     */
-    public function getPublicMessage()
-    {
-        return 'Your payment failed.  Please try again';
-    }
 }
