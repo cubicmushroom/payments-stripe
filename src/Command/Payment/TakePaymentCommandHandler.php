@@ -115,6 +115,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
             if (!$purchaseResponse->isSuccessful()) {
+                // @todo Add saving of failed details to payment record
                 throw PaymentNotAuthorisedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
         } catch (PaymentFailedException $exception) {
