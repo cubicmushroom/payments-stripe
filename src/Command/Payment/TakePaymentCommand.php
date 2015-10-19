@@ -55,21 +55,21 @@ class TakePaymentCommand implements CommandInterface
      * @Assert\Type(type="\Money\Money", message="Please provide the cost details")
      */
 
-    private $cost;
+    protected $cost;
 
     /**
      * @var string
      *
      * @Assert\NotBlank(message="Please provide a payment card")
      */
-    private $token;
+    protected $token;
 
     /**
      * @var string
      *
      * @Assert\NotBlank(message="Please provide a description of the payment")
      */
-    private $description;
+    protected $description;
 
     /**
      * @var EmailAddress
@@ -77,7 +77,13 @@ class TakePaymentCommand implements CommandInterface
      * @Assert\NotNull(message="Please provide the user's email address")
      * @Assert\Type(type="\ValueObjects\Web\EmailAddress", message="Please provide the user's email address")
      */
-    private $userEmail;
+    protected $userEmail;
+
+    /**
+     * @var array
+     */
+    protected $metaData = [];
+
 
 
     /**
@@ -176,4 +182,24 @@ class TakePaymentCommand implements CommandInterface
     }
 
 
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
+    }
+
+
+    /**
+     * @param array $metaData
+     *
+     * @return TakePaymentCommand
+     */
+    public function setMetaData(array $metaData)
+    {
+        $this->metaData = $metaData;
+
+        return $this;
+    }
 }

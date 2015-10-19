@@ -150,7 +150,8 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $command->getCost(),
             $command->getToken(),
             $command->getDescription(),
-            $command->getUserEmail()
+            $command->getUserEmail(),
+            $command->getMetaData()
         );
 
         return $payment;
