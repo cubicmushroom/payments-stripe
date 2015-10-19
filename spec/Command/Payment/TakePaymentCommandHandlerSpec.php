@@ -269,7 +269,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $gateway->purchase(
             [
-                'amount'      => self::AMOUNT,
+                'amount'      => (self::AMOUNT / 100),
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,

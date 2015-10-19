@@ -142,7 +142,7 @@ class PaymentSpec extends ObjectBehavior
         /** @noinspection PhpUndefinedMethodInspection */
         $this->getGatewayPurchaseArray()->shouldReturn(
             [
-                'amount'      => self::AMOUNT,
+                'amount'      => (self::AMOUNT / 100),
                 'currency'    => self::CURRENCY,
                 'token'       => self::TOKEN,
                 'description' => self::DESCRIPTION,
