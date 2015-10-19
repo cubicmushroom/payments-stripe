@@ -24,6 +24,7 @@ class SavePaymentFailedException extends AbstractPaymentException implements Pub
      */
     public function getPublicMessage()
     {
-        return 'cm_payments.exception.save_payment_failed';
+        return 'Your payment was successful, however something went wrong when updating your account.  Please get in ' .
+               'touch and we\'ll sort this out for you as soon as possible';
     }
 }
