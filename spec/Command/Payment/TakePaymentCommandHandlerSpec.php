@@ -200,25 +200,25 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_validates_the_command(
-//        /** @noinspection PhpDocSignatureInspection */
-//        PaymentRepositoryInterface $repository,
-//        TakePaymentCommand $command,
-//        ValidatorInterface $validator
-//    ) {
-//        $this->setRepositoryMethodExpectations($repository);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->handle($command);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $validator->validate($command)->shouldHaveBeenCalled();
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_validates_the_command(
+        /** @noinspection PhpDocSignatureInspection */
+        PaymentRepositoryInterface $repository,
+        TakePaymentCommand $command,
+        ValidatorInterface $validator
+    ) {
+        $this->setRepositoryMethodExpectations($repository);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->handle($command);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $validator->validate($command)->shouldHaveBeenCalled();
+    }
+
+
 //    /**
 //     * @uses TakePaymentCommandHandler::_handle()
 //     */
