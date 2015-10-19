@@ -8,8 +8,6 @@
 
 namespace CubicMushroom\Payments\Stripe\Exception\Domain\Payment;
 
-use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
-
 /**
  * Exception thrown when a payment is rejected by the gateway
  *
@@ -18,7 +16,7 @@ use CubicMushroom\Payments\Stripe\Exception\PublicSafeMessageInterface;
  *
  * @package CubicMushroom\Payments
  */
-class PaymentNotAuthorisedException extends AbstractPaymentException implements PublicSafeMessageInterface
+class PaymentNotAuthorisedException extends PaymentFailedException
 {
     /**
      * Returns a message to display to the website user
@@ -27,6 +25,6 @@ class PaymentNotAuthorisedException extends AbstractPaymentException implements 
      */
     public function getPublicMessage()
     {
-        return 'Your payment was rejected.  ' . $this->getMessage();
+        return 'Your payment was rejected.  '.$this->getMessage();
     }
 }
