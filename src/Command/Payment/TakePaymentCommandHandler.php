@@ -16,6 +16,7 @@ use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentNotAuthorisedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
+use Hexagonal\Exception\Domain\Generic\IdAlreadyAssignedExceptionl;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\Response;
@@ -110,7 +111,6 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             // We clone the payment object here, so PHPSpec can test it, until the following issue is resolved…
             // https://github.com/phpspec/phpspec/issues/789
             $this->paymentId = $this->repository->savePaymentBeforeProcessing($payment);
-            $payment->assignId($this->paymentId);
 
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
