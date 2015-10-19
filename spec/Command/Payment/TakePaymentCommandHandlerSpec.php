@@ -11,6 +11,8 @@ use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\CreatePaymentFailedException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use League\Event\EmitterInterface;
 use Money\Currency;
 use Money\Money;
@@ -19,7 +21,6 @@ use Omnipay\Stripe\Message\PurchaseRequest;
 use Omnipay\Stripe\Message\Response;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use ValueObjects\Web\EmailAddress;
 
@@ -120,8 +121,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         Gateway $gateway,
         PurchaseRequest $purchaseRequest,
         Response $response,
-        PaymentRepositoryInterface $repository,
-        LoggerInterface $logger
+        PaymentRepositoryInterface $repository
     ) {
         // Command
         /** @noinspection PhpUndefinedMethodInspection */
@@ -148,7 +148,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 
         /** @see TakePaymentCommandHandler::create() */
         /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository, $logger]);
+        $this->beConstructedThrough('create', [$validator, $emitter, $gateway, $repository]);
     }
 
 
@@ -184,19 +184,10 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     /**
      * @uses TakePaymentCommandHandler::_handle()
      */
-    function it_does_not_handle_other_commands(
-        /** @noinspection PhpDocSignatureInspection */
-        LoggerInterface $logger
-    ) {
+    function it_does_not_handle_other_commands()
+    {
         /** @noinspection PhpUndefinedMethodInspection */
         $this->shouldThrow(InvalidCommandException::class)->during('handle', [new DummyCommand]);
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $logger->error(
-            Argument::containingString(
-                TakePaymentCommandHandler::class.' cannot handle commands of type '.DummyCommand::class
-            )
-        )->shouldHaveBeenCalled();
     }
 
 
@@ -228,40 +219,32 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         TakePaymentCommand $command
     ) {
         $this->setRepositoryMethodExpectations($repository);
+        // I think this ignores called to markAsPaid()???
+        /** @noinspection PhpParamsInspection */
+        $repository->markAsPaid(Argument::any());
 
         /** @noinspection PhpUndefinedMethodInspection */
         $this->handle($command);
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_should_throw_a_payment_failed_exception_if_unable_to_save_unpaid_payment_details(
-//        /** @noinspection PhpDocSignatureInspection */
-//        TakePaymentCommand $command,
-//        PaymentRepositoryInterface $repository,
-//        LoggerInterface $logger
-//    ) {
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        /** @noinspection PhpVoidFunctionResultUsedInspection */
-//        /** @noinspection PhpParamsInspection */
-//        $repository->savePaymentBeforeProcessing(Argument::any())->willThrow(SavePaymentFailedException::class);
-//
-//        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $commandClass = get_class($command->getWrappedObject());
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $logger->error(
-//            Argument::containingString(
-//                "Exception throw while handling {$commandClass} command... Unable to save payment details before ".
-//                "processing"
-//            )
-//        )->shouldHaveBeenCalled();
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_should_throw_a_payment_failed_exception_if_unable_to_save_unpaid_payment_details(
+        /** @noinspection PhpDocSignatureInspection */
+        TakePaymentCommand $command,
+        PaymentRepositoryInterface $repository
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        /** @noinspection PhpParamsInspection */
+        $repository->savePaymentBeforeProcessing(Argument::any())->willThrow(CreatePaymentFailedException::class);
+
+        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
+    }
+
+
 //    /**
 //     * @uses TakePaymentCommandHandler::_handle()
 //     */
@@ -302,8 +285,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 //        /** @noinspection PhpDocSignatureInspection */
 //        PaymentRepositoryInterface $repository,
 //        Gateway $gateway,
-//        TakePaymentCommand $command,
-//        LoggerInterface $logger
+//        TakePaymentCommand $command
 //    ) {
 //        $this->setRepositoryMethodExpectations($repository);
 //        $this->clearRepositoryMarkAsPaidExpectation($repository);
@@ -312,16 +294,6 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
 //        $gateway->purchase(Argument::any())->willThrow(new \Exception);
 //
 //        $this->shouldThrow(PaymentFailedException::class)->during('handle', [$command]);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $commandClass = get_class($command->getWrappedObject());
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $logger->error(
-//            Argument::containingString(
-//                "Exception throw while handling {$commandClass} command... Failed to process payment with the Stripe ".
-//                "payment gateway"
-//            )
-//        )->shouldHaveBeenCalled();
 //    }
 //
 //

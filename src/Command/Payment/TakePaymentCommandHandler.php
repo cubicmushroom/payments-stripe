@@ -47,7 +47,6 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      * @param EmitterInterface           $emitter
      * @param Gateway                    $gateway
      * @param PaymentRepositoryInterface $repository
-     * @param LoggerInterface            $logger
      *
      * @return static
      */
@@ -55,15 +54,13 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         ValidatorInterface $validator,
         EmitterInterface $emitter,
         Gateway $gateway,
-        PaymentRepositoryInterface $repository,
-        LoggerInterface $logger
+        PaymentRepositoryInterface $repository
     ) {
         /** @var self $handler */
         $handler = parent::createBasic($validator, $emitter);
 
         $handler->gateway    = $gateway;
         $handler->repository = $repository;
-        $handler->logger     = $logger;
 
         return $handler;
     }
