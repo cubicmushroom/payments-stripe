@@ -115,7 +115,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $this->paymentId = $this->repository->savePaymentBeforeProcessing(clone $payment);
             $payment->assignId($this->paymentId);
         } catch (\Exception $exception) {
-            throw PaymentFailedException::createWithPayment(
+            throw CreatePaymentFailedException::createWithPayment(
                 $payment,
                 'Unable to save payment details before processing',
                 0,
@@ -130,6 +130,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
                 throw PaymentNotAuthorisedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
         } catch (PaymentNotAuthorisedException $paymentFailedException) {
+            // Just throw it
             throw $paymentFailedException;
         } catch (\Exception $gatewayException) {
             $this->logError('There was a problem with the Stripe gateway', $gatewayException);
