@@ -14,6 +14,7 @@ use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
+use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentRejectedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
@@ -97,8 +98,10 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      *
      * @param CommandInterface|TakePaymentCommand $command
      *
-     * @throws PaymentFailedException
-     * @throws SavePaymentFailedException
+     * @throws PaymentRejectedException if the gateway have not authorised the payment
+     * @throws PaymentFailedException if something else goes wrong with the payment request
+     * @throws SavePaymentFailedException if the payment succeeds, but something goes wrong when updtaing the payment
+     *         record
      */
     protected function _handle(CommandInterface $command)
     {
@@ -124,9 +127,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
             if (!$purchaseResponse->isSuccessful()) {
-                throw PaymentFailedException::createWithPayment($payment, $purchaseResponse->getMessage());
+                throw PaymentRejectedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
-        } catch( PaymentFailedException $paymentFailedException) {
+        } catch (PaymentRejectedException $paymentFailedException) {
             throw $paymentFailedException;
         } catch (\Exception $gatewayException) {
             $this->logError('There was a problem with the Stripe gateway', $gatewayException);
@@ -138,7 +141,11 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             );
         }
 
-        $this->updatePaymentWithStripeCharge($payment, $purchaseResponse);
+        try {
+            $this->updatePaymentWithStripeCharge($payment, $purchaseResponse);
+        } catch (SavePaymentFailedException $e) {
+            throw $e;
+        }
     }
 
 
