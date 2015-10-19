@@ -4,6 +4,7 @@ namespace spec\CubicMushroom\Payments\Stripe\Command\Payment;
 
 use CubicMushroom\Hexagonal\Command\CommandHandlerInterface;
 use CubicMushroom\Hexagonal\Command\CommandInterface;
+use CubicMushroom\Hexagonal\Exception\Command\InvalidCommandException;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommand;
 use CubicMushroom\Payments\Stripe\Command\Payment\TakePaymentCommandHandler;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
@@ -180,25 +181,25 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     }
 
 
-//    /**
-//     * @uses TakePaymentCommandHandler::_handle()
-//     */
-//    function it_does_not_handle_other_commands(
-//        /** @noinspection PhpDocSignatureInspection */
-//        LoggerInterface $logger
-//    ) {
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $this->shouldThrow(InvalidCommandException::class)->during('handle', [new DummyCommand]);
-//
-//        /** @noinspection PhpUndefinedMethodInspection */
-//        $logger->error(
-//            Argument::containingString(
-//                TakePaymentCommandHandler::class.' cannot handle commands of type '.DummyCommand::class
-//            )
-//        )->shouldHaveBeenCalled();
-//    }
-//
-//
+    /**
+     * @uses TakePaymentCommandHandler::_handle()
+     */
+    function it_does_not_handle_other_commands(
+        /** @noinspection PhpDocSignatureInspection */
+        LoggerInterface $logger
+    ) {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->shouldThrow(InvalidCommandException::class)->during('handle', [new DummyCommand]);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $logger->error(
+            Argument::containingString(
+                TakePaymentCommandHandler::class.' cannot handle commands of type '.DummyCommand::class
+            )
+        )->shouldHaveBeenCalled();
+    }
+
+
 //    /**
 //     * @uses TakePaymentCommandHandler::_handle()
 //     */
