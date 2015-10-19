@@ -126,7 +126,10 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
             if (!$purchaseResponse->isSuccessful()) {
                 throw PaymentFailedException::createWithPayment($payment, $purchaseResponse->getMessage());
             }
+        } catch( PaymentFailedException $paymentFailedException) {
+            throw $paymentFailedException;
         } catch (\Exception $gatewayException) {
+            $this->logError('There was a problem with the Stripe gateway', $gatewayException);
             throw PaymentFailedException::createWithPayment(
                 $payment,
                 'Failed to process payment with the Stripe payment gateway',
