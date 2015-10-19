@@ -9,6 +9,7 @@ use CubicMushroom\Hexagonal\Event\CommandFailedEventInterface;
 use CubicMushroom\Hexagonal\Event\CommandSucceededEventInterface;
 use CubicMushroom\Payments\Stripe\Domain\Gateway\StripePaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\Payment;
+use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentId;
 use CubicMushroom\Payments\Stripe\Domain\Payment\PaymentRepositoryInterface;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentFailureEvent;
 use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
@@ -34,6 +35,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class TakePaymentCommandHandler extends AbstractCommandHandler
 {
+    /**
+     * @var PaymentId
+     */
+    protected $paymentId;
+
 
     /**
      * @param ValidatorInterface         $validator
@@ -96,13 +102,15 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function _handle(CommandInterface $command)
     {
+        $this->paymentId = null;
+
         $payment = $this->convertCommandToPayment($command);
 
         try {
             // We clone the payment object here, so PHPSpec can test it, until the following issue is resolved…
             // https://github.com/phpspec/phpspec/issues/789
-            $paymentId = $this->repository->savePaymentBeforeProcessing(clone $payment);
-            $payment->assignId($paymentId);
+            $this->paymentId = $this->repository->savePaymentBeforeProcessing(clone $payment);
+            $payment->assignId($this->paymentId);
         } catch (\Exception $exception) {
             throw PaymentFailedException::createWithPayment(
                 $payment,
@@ -185,7 +193,7 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
      */
     protected function getSuccessEvent(CommandInterface $command)
     {
-        return new TakePaymentSuccessEvent($command);
+        return new TakePaymentSuccessEvent($this->paymentId);
     }
 
 
