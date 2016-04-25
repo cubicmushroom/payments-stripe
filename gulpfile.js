@@ -1,7 +1,6 @@
-var gulp         = require('gulp'),
-    phpspecTasks = require("gulp-cm-phpspec-tasks"),
-    versionTasks = require('./gulp/version-tasks');
+var gulp = require('./gulp/loader')(['release']);
 
+var phpspecTasks = require("gulp-cm-phpspec-tasks");
 
 phpspecTasks.addTasks(gulp, 'CubicMushroom\\Payments\\Stripe\\', {bin: 'vendor/bin/phpspec'});
 
@@ -11,8 +10,3 @@ phpspecTasks.addTasks(gulp, 'CubicMushroom\\Payments\\Stripe\\', {bin: 'vendor/b
  * This should run each of the relevant test tasks
  */
 gulp.task('test', ['phpspec']);
-
-/**
- * Versioning tasks
- */
-versionTasks.addTasks();
