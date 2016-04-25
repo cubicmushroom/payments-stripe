@@ -11,11 +11,7 @@
     }
   ],
   "minimum-stability": "dev",
-  "autoload"         : {
-    "psr-4": {
-      "CubicMushroom\\Payments\\Stripe\\": "src/"
-    }
-  },
+  "prefer-stable"    : true,
   "repositories"     : [
     {
       "type": "vcs",
@@ -34,6 +30,11 @@
     "codeception/codeception": "^2.1",
     "doctrine/annotations"   : "^1.2",
     "doctrine/cache"         : "^1.4"
+  },
+    "autoload"         : {
+      "psr-4": {
+        "CubicMushroom\\Payments\\Stripe\\": "src/"
+      }
   },
   "scripts"          : {
     "post-install-cmd": [
