@@ -1,6 +1,6 @@
 {
   "name": "payments-stripe",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Package for handling basic Stripe payment gateway operations",
   "main": "gulpfile.js",
   "scripts": {

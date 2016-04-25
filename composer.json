@@ -1,54 +1,54 @@
 {
-  "name"             : "cubicmushroom/payments-stripe",
-  "description"      : "Package for handling basic Stripe payment gateway operations",
-  "version"          : "1.0.0",
-  "type"             : "library",
-  "license"          : "ISC",
-  "authors"          : [
+  "name": "cubicmushroom/payments-stripe",
+  "description": "Package for handling basic Stripe payment gateway operations",
+  "version": "1.1.0",
+  "type": "library",
+  "license": "ISC",
+  "authors": [
     {
-      "name" : "Toby Griffiths",
+      "name": "Toby Griffiths",
       "email": "toby@cubicmushroom.co.uk"
     }
   ],
   "minimum-stability": "dev",
-  "prefer-stable"    : true,
-  "repositories"     : [
+  "prefer-stable": true,
+  "repositories": [
     {
       "type": "vcs",
-      "url" : "https://github.com/toby-griffiths/phpspec"
+      "url": "https://github.com/toby-griffiths/phpspec"
     }
   ],
-  "require"          : {
-    "omnipay/stripe"                    : "^2.0",
-    "mathiasverraes/money"              : "^1.0",
+  "require": {
+    "omnipay/stripe": "^2.0",
+    "mathiasverraes/money": "^1.0",
     "cubicmushroom/hexagonal-components": "^1.0",
-    "nicolopignatelli/valueobjects"     : "^3.0",
-    "psr/log"                           : "^1.0"
+    "nicolopignatelli/valueobjects": "^3.0",
+    "psr/log": "^1.0"
   },
-  "require-dev"      : {
-    "phpspec/phpspec"        : "dev-master",
+  "require-dev": {
+    "phpspec/phpspec": "dev-master",
     "codeception/codeception": "^2.1",
-    "doctrine/annotations"   : "^1.2",
-    "doctrine/cache"         : "^1.4"
+    "doctrine/annotations": "^1.2",
+    "doctrine/cache": "^1.4"
   },
-    "autoload"         : {
-      "psr-4": {
-        "CubicMushroom\\Payments\\Stripe\\": "src/"
-      }
+  "autoload": {
+    "psr-4": {
+      "CubicMushroom\\Payments\\Stripe\\": "src/"
+    }
   },
   "extra": {
     "branch-alias": {
       "dev-develop": "1.0-dev"
     }
   },
-  "scripts"          : {
+  "scripts": {
     "post-install-cmd": [
       "gulp test"
     ],
-    "post-update-cmd" : [
+    "post-update-cmd": [
       "gulp test"
     ],
-    "pre-archive-cmd" : [
+    "pre-archive-cmd": [
       "gulp test"
     ]
   }
