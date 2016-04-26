@@ -78,6 +78,11 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
     protected $paymentId;
 
     /**
+     * @var Payment
+     */
+    protected $expectedUnpaidSavedPayment;
+
+    /**
      * @var StripePaymentId
      */
     protected $stripePaymentId;
@@ -93,23 +98,25 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
      */
     function __construct()
     {
-        $this->currency                 = new Currency(self::CURRENCY);
-        $this->cost                     = new Money(self::AMOUNT, $this->currency);
-        $this->userEmail                = new EmailAddress(self::USER_EMAIL);
-        $this->metadata                 = ['membershipId' => self::MEMBERSHIP_ID];
-        $this->expectedUnpaidPayment    = Payment::createUnpaid(
+        $this->currency              = new Currency(self::CURRENCY);
+        $this->cost                  = new Money(self::AMOUNT, $this->currency);
+        $this->userEmail             = new EmailAddress(self::USER_EMAIL);
+        $this->metadata              = ['membershipId' => self::MEMBERSHIP_ID];
+        $this->expectedUnpaidPayment = Payment::createUnpaid(
             $this->cost,
             self::TOKEN,
             self::DESCRIPTION,
             $this->userEmail,
             $this->metadata
         );
-        $this->paymentId                = new PaymentId(self::PAYMENT_ID);
-        $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
-        $this->expectedProcessedPayment = clone $this->expectedUnpaidPayment;
-        $this->expectedProcessedPayment
-            ->assignId($this->paymentId)
-            ->hasBeenPaidWithGatewayTransaction($this->stripePaymentId);
+        $this->paymentId             = self::PAYMENT_ID;
+        $this->stripePaymentId       = new StripePaymentId(self::STRIPE_PAYMENT_ID);
+
+        $this->expectedUnpaidSavedPayment = clone $this->expectedUnpaidPayment;
+        $this->expectedUnpaidSavedPayment->assignId(new PaymentId($this->paymentId));
+
+        $this->expectedProcessedPayment = clone $this->expectedUnpaidSavedPayment;
+        $this->expectedProcessedPayment->hasBeenPaidWithGatewayTransaction($this->stripePaymentId);
     }
 
 
@@ -436,7 +443,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         // We expect the processed payment due to this issue…
         // https://github.com/phpspec/phpspec/issues/789
         $repository->savePaymentBeforeProcessing($this->expectedUnpaidPayment)
-                   ->willReturn($this->paymentId);
+                   ->willReturn($this->expectedUnpaidSavedPayment);
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $repository->markAsPaid($this->expectedProcessedPayment)->shouldBeCalled();

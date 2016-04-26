@@ -237,7 +237,7 @@ class Payment extends Model implements ModelInterface
             'description' => $this->description,
             'metadata'    => array_merge_recursive(
                 $metaData,
-                ['paymentId' => $this->id, 'userEmail' => $this->userEmail]
+                ['paymentId' => $this->id->getValue(), 'userEmail' => $this->userEmail]
             ),
         ];
     }
