@@ -1,7 +1,7 @@
 {
   "name": "cubicmushroom/payments-stripe",
   "description": "Package for handling basic Stripe payment gateway operations",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "library",
   "license": "ISC",
   "authors": [
