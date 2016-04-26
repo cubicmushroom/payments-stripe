@@ -16,7 +16,6 @@ use CubicMushroom\Payments\Stripe\Event\Command\TakePaymentSuccessEvent;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentFailedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\PaymentNotAuthorisedException;
 use CubicMushroom\Payments\Stripe\Exception\Domain\Payment\SavePaymentFailedException;
-use Hexagonal\Exception\Domain\Generic\IdAlreadyAssignedExceptionl;
 use League\Event\EmitterInterface;
 use Omnipay\Stripe\Gateway;
 use Omnipay\Stripe\Message\Response;
