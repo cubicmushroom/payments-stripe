@@ -110,7 +110,9 @@ class TakePaymentCommandHandler extends AbstractCommandHandler
         try {
             // We clone the payment object here, so PHPSpec can test it, until the following issue is resolved…
             // https://github.com/phpspec/phpspec/issues/789
-            $this->paymentId = $this->repository->savePaymentBeforeProcessing($payment);
+            $payment = $this->repository->savePaymentBeforeProcessing($payment);
+
+            $this->paymentId = $payment->id();
 
             $purchaseRequest  = $this->gateway->purchase($payment->getGatewayPurchaseArray());
             $purchaseResponse = $purchaseRequest->send();
