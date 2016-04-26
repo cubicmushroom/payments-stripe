@@ -104,7 +104,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
             $this->userEmail,
             $this->metadata
         );
-        $this->paymentId                = new PaymentId(self::PAYMENT_ID);
+        $this->paymentId                = self::PAYMENT_ID;
         $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
         $this->expectedProcessedPayment = clone $this->expectedUnpaidPayment;
         $this->expectedProcessedPayment
