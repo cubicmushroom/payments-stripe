@@ -17,11 +17,11 @@ interface PaymentRepositoryInterface
     /**
      * Should save a new payment record, and mark it as unpaid
      *
-     * It should also update the $payment::$id field with the new ID
+     * It should return the payment, with the $id property updated with the new ID
      *
      * @param Payment $payment
      *
-     * @return PaymentId
+     * @return Payment
      *
      * @throws CreatePaymentFailedException
      */
