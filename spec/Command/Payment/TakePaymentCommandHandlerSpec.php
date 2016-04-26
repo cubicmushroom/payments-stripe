@@ -108,7 +108,7 @@ class TakePaymentCommandHandlerSpec extends ObjectBehavior
         $this->stripePaymentId          = new StripePaymentId(self::STRIPE_PAYMENT_ID);
         $this->expectedProcessedPayment = clone $this->expectedUnpaidPayment;
         $this->expectedProcessedPayment
-            ->assignId($this->paymentId)
+            ->assignId(new PaymentId($this->paymentId))
             ->hasBeenPaidWithGatewayTransaction($this->stripePaymentId);
     }
 
