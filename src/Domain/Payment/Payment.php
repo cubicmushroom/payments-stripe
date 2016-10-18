@@ -231,7 +231,7 @@ class Payment extends Model implements ModelInterface
         $metaData = ($this->metaData ? json_decode($this->metaData, true) : []);
 
         return [
-            'amount'      => number_format(($this->amount / 100), 2),
+            'amount'      => number_format(($this->amount / 100), 2, '.', ''),
             'currency'    => $this->currency,
             'token'       => $this->token,
             'description' => $this->description,
